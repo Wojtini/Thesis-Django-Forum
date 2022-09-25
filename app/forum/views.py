@@ -11,13 +11,5 @@ class Index(View):
 
     @user_verification
     def get(self, request, *args, **kwargs):
-        response = render(request, self.template_name)
+        response = render(request, self.template_name, context={"user": kwargs.get("user")})
         return response
-
-  # def post(self, request, *args, **kwargs):
-  #   form = self.form_class(request.POST)
-  #   if form.is_valid():
-  #     form.save()
-  #     return HttpResonseRedirect(reverse('list-view'))
-  #   else:
-  #     return render(request, self.template_name, {'form': form})

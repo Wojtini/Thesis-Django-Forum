@@ -19,7 +19,7 @@ class Cookie:
 
 
 @dataclass
-class UserInfo:
+class UserPassword:
     model: User
     password: str
 
@@ -27,31 +27,21 @@ class UserInfo:
 def user_verification(func):
     def inner(*args, **kwargs):
         request = args[0].request
-        if COOKIE_USER in request.COOKIES and COOKIE_PASS in request.COOKIES:
-            password = request.COOKIES[COOKIE_PASS]
-            user = request.COOKIES[COOKIE_USER]
-            logger.info(f"{user}: Verifying user")
-            if user := verify_user(user, password):
-                kwargs.update({"user": user})
-                logger.info(f"{user}: User verified")
-                response = func(*args, **kwargs)
-                for key, value in request.COOKIES.items():
-                    response.set_cookie(key, value, COOKIE_LIFETIME)
-                return response
-            else:
-                logger.info(f"{user}: User failed verification")
+        if user := get_user(request):
+            kwargs.update({"user": user})
+        else:
+            new_user = create_user()
+            kwargs.update(
+                {
+                    "user": new_user.model,
+                    "cookies_to_set": [
+                        Cookie(COOKIE_USER, new_user.model.identifier),
+                        Cookie(COOKIE_PASS, new_user.password),
+                    ]
+                }
+            )
+            logger.info(f"{new_user.model.identifier}: Created a new user")
 
-        new_user = create_user()
-        kwargs.update(
-            {
-                "user": new_user.model,
-                "cookies_to_set": [
-                    Cookie(COOKIE_USER, new_user.model.identifier),
-                    Cookie(COOKIE_PASS, new_user.password),
-                ]
-            }
-        )
-        logger.info(f"{new_user.model.identifier}: Created a new user")
         response = func(*args, **kwargs)
 
         for cookie in kwargs.get("cookies_to_set", []):
@@ -61,7 +51,19 @@ def user_verification(func):
     return inner
 
 
-def create_user() -> UserInfo:
+def get_user(request) -> Optional[User]:
+    if COOKIE_USER in request.COOKIES and COOKIE_PASS in request.COOKIES:
+        password = request.COOKIES[COOKIE_PASS]
+        user_id = request.COOKIES[COOKIE_USER]
+        logger.info(f"{user_id}: Verifying user")
+        if user := verify_user(user_id, password):
+            logger.info(f"{user}: User verified")
+            return user
+        logger.info(f"{user_id}: User verification failed")
+    return None
+
+
+def create_user() -> UserPassword:
     password = str(uuid.uuid4())
     new_user = User()
     hashed_password = make_password(
@@ -71,7 +73,7 @@ def create_user() -> UserInfo:
     )
     new_user.password = hashed_password
     new_user.save()
-    return UserInfo(model=new_user, password=password)
+    return UserPassword(model=new_user, password=password)
 
 
 def verify_user(user_id: str, password: str) -> Optional[User]:

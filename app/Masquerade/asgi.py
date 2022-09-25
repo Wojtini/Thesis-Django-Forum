@@ -11,6 +11,12 @@ import os
 
 from django.core.asgi import get_asgi_application
 
+import sys
+import pathlib
+
+
+sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Masquerade.settings")
 
 application = get_asgi_application()

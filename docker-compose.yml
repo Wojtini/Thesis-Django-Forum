@@ -13,16 +13,33 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
   web:
     build: .
-    command: python app/manage.py runserver 0:8000
+    command: sh -c "cd app && rm /app/app/staticfiles -r && python manage.py collectstatic && daphne -b 0.0.0.0 -p 8000 Masquerade.asgi:application"
     volumes:
       - .:/app
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - DEBUG_MODE=True
+      - DEBUG_MODE=False
       - SECRET_KEY=NONPRODUCTIONKEY
     ports:
       - "8000:8000"
     depends_on:
       - db
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    volumes:
+      - ./app/staticfiles:/staticfiles
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+  certbot:
+    image: certbot/certbot
+    command: sh -c "/test/init-letsencrypt.sh"
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
