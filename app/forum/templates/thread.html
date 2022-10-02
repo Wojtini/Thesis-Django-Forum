@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for entry in entries %}
+        {% include "entry.html" with entry=entry %}
+    {% endfor %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+
+{% endblock %}

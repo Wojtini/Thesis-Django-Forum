@@ -3,7 +3,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY / .
+COPY /app .
 
 RUN pip install pip-tools
 RUN pip-compile
