@@ -51,7 +51,7 @@ class Thread(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f"{self.title} by {self.creator.display_name}"
+        return f"{self.title} by {str(self.creator)}"
 
     @property
     def points(self) -> int:
@@ -74,7 +74,7 @@ class Image(models.Model):
     name = models.CharField(max_length=64)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     original_file = models.ImageField()
-    compressed_file = models.ImageField()
+    compressed_file = models.ImageField(null=True)
 
     def __str__(self):
         return f"{self.original_file.name}"

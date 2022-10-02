@@ -13,7 +13,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
   web:
     build: .
-    command: sh -c "cd app && rm /app/app/staticfiles -r && python manage.py collectstatic && daphne -b 0.0.0.0 -p 8000 Masquerade.asgi:application"
+    command: sh -c "cd app && rm /app/staticfiles -r && python manage.py collectstatic && daphne -b 0.0.0.0 -p 8000 Masquerade.asgi:application"
     volumes:
       - .:/app
     environment:
@@ -34,7 +34,8 @@ services:
     depends_on:
       - web
     volumes:
-      - ./app/staticfiles:/staticfiles
+      - ./staticfiles:/staticfiles
+      - ./media:/media
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
   certbot:

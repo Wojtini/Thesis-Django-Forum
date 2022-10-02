@@ -138,4 +138,7 @@ postgres-data
 data
 
 #static files
-app/staticfiles
+staticfiles
+
+#media files
+media
