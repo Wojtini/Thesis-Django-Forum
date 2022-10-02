@@ -13,6 +13,7 @@ ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost"]
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -21,7 +22,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "forum.apps.ForumConfig",
     'django_crontab',
-    'channels',
 ]
 
 MIDDLEWARE = [
@@ -108,7 +108,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CHANNELS
 
-ASGI_APPLICATION = "Masquerade.routing.application"
+ASGI_APPLICATION = "Masquerade.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 # COOKIES NAMES
 

@@ -1,9 +1,13 @@
 import datetime
+import json
 from io import BytesIO
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.core.files import File
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.template import loader
 from django.views import View
 
 from forum import models
@@ -42,6 +46,7 @@ class ThreadView(View):
         thread_id = kwargs.get("thread_id")
         thread = models.Thread.objects.get(id=thread_id)
         entries = thread.entries
+
         return render(
             request,
             self.template_name,
@@ -76,9 +81,21 @@ class ThreadView(View):
                 replied_to=None,
             )
             new_entry.save()
+
+            html_view = loader.render_to_string("entry.html", {"entry": new_entry})
+            print(html_view)
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                str(thread_id),
+                {
+                    "type": "system_message",
+                    "content": html_view,
+                },
+            )
+
             return HttpResponseRedirect(request.path_info)
 
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {"form": form})
 
 
 def compress(image):
