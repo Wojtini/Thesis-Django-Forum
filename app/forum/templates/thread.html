@@ -12,32 +12,24 @@
     </section>
 
     <script>
-        const roomName = {{ thread.id }};
         const main_section = document.getElementById("section_main");
+        const thread_id = {{ thread.id }};
 
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/'
-            + roomName
-            + '/'
+        const thread_update_socket = new WebSocket(
+            "ws://" + window.location.host + "/ws/thread/" + thread_id + "/"
         );
 
-        chatSocket.onmessage = function(e) {
-            const data = e.data;
+        thread_update_socket.onmessage = function(e) {
             const placeholder = document.createElement("div");
-            placeholder.innerHTML = data;
-            const node = placeholder.firstElementChild;
-            console.log(data)
-            main_section.appendChild(node)
+            placeholder.innerHTML = e.data;
+            main_section.appendChild(placeholder.firstElementChild)
         };
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
+        thread_update_socket.onclose = function(e) {
+            console.error('Chat socket closed');
         };
 
-        function myFunction(id) {
-            console.log(id)
+        function toggle_resolution(id) {
             let compressed = document.getElementById(id + "_compressed")
             let original = document.getElementById(id+"_original")
             if (compressed.hasAttribute("hidden")){

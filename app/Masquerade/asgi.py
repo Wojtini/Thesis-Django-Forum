@@ -16,7 +16,7 @@ from django.core.asgi import get_asgi_application
 
 import sys
 import pathlib
-import forum.routing
+import forum.urls
 
 sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
 
@@ -29,7 +29,7 @@ application = ProtocolTypeRouter({
   "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(
-                forum.routing.websocket_urlpatterns
+                forum.urls.websocket_urlpatterns
             )
         )
     ),

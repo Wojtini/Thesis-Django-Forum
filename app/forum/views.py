@@ -1,5 +1,3 @@
-import datetime
-import json
 from io import BytesIO
 
 from asgiref.sync import async_to_sync
@@ -64,7 +62,6 @@ class ThreadView(View):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             thread_id = kwargs.get("thread_id")
-            content = form.cleaned_data["content"]
             img = form.cleaned_data.get("image")
             new_img = Image(
                 name="Test",
@@ -76,20 +73,18 @@ class ThreadView(View):
             new_entry = Entry(
                 creator=kwargs.get("user"),
                 thread=models.Thread.objects.get(id=thread_id),
-                content=content,
+                content=form.cleaned_data["content"],
                 attached_image=new_img,
                 replied_to=None,
             )
             new_entry.save()
 
-            html_view = loader.render_to_string("entry.html", {"entry": new_entry})
-            print(html_view)
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 str(thread_id),
                 {
-                    "type": "system_message",
-                    "content": html_view,
+                    "type": "update_thread",
+                    "content": loader.render_to_string("entry.html", {"entry": new_entry}),
                 },
             )
 
