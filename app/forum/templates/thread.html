@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+    token
+    {% csrf_token %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
@@ -14,9 +16,10 @@
     <script>
         const main_section = document.getElementById("section_main");
         const thread_id = {{ thread.id }};
+        const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
 
         const thread_update_socket = new WebSocket(
-            "ws://" + window.location.host + "/ws/thread/" + thread_id + "/"
+            ws_scheme + "://" + window.location.host + "/ws/thread/" + thread_id + "/"
         );
 
         thread_update_socket.onmessage = function(e) {

@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 from django.views import View
+from django.views.decorators.csrf import csrf_protect
 
 from forum import models
 from forum.forms import EntryForm
@@ -98,6 +99,7 @@ def compress(image):
     im = PImage.open(image)
     im_io = BytesIO()
     im.thumbnail(size, PImage.ANTIALIAS)
+    im = im.convert('RGB')
     im.save(im_io, 'JPEG', quality=60)
     new_image = File(im_io, name=image.name)
     return new_image
