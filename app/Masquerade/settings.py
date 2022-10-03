@@ -13,7 +13,6 @@ ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost"]
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -22,6 +21,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "forum.apps.ForumConfig",
     'django_crontab',
+    'channels',
 ]
 
 MIDDLEWARE = [
