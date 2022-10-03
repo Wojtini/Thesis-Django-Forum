@@ -8,7 +8,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG_MODE") == "True"
 
 ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost"]
-
+CSRF_TRUSTED_ORIGINS = ['https://milepogawedki.xyz']
 
 # Application definition
 
@@ -108,7 +108,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CHANNELS
 
-ASGI_APPLICATION = "Masquerade.routing.application"
+ASGI_APPLICATION = "Masquerade.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 # COOKIES NAMES
 

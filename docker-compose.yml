@@ -38,9 +38,7 @@ services:
       - ./media:/media
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
-  certbot:
-    image: certbot/certbot
-    command: sh -c "/test/init-letsencrypt.sh"
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"

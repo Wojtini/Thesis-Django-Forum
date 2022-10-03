@@ -1,22 +1,7 @@
 <div id={{ entry.id }}>
     {{ entry.creator }}, {{ entry.points }} <br>
     {{ entry.content }} <br>
-    <img id="{{ entry.id }}_original" onclick="myFunction({{ entry.id }})" src="{{ entry.attached_image.compressed_file.url }}">
-    <img id="{{ entry.id }}_compressed" onclick="myFunction({{ entry.id }})" loading="lazy" src="{{ entry.attached_image.original_file.url }}" hidden>
+    <img id="{{ entry.id }}_original" onclick="toggle_resolution({{ entry.id }})" src="{{ entry.attached_image.compressed_file.url }}">
+    <img id="{{ entry.id }}_compressed" onclick="toggle_resolution({{ entry.id }})" loading="lazy" src="{{ entry.attached_image.original_file.url }}" hidden>
     <br>
 </div>
-
-<script>
-    function myFunction(id) {
-        console.log(id)
-        let compressed = document.getElementById(id + "_compressed")
-        let original = document.getElementById(id+"_original")
-        if (compressed.hasAttribute("hidden")){
-            compressed.removeAttribute("hidden")
-            original.setAttribute("hidden", "hidden")
-        }else{
-            original.removeAttribute("hidden")
-            compressed.setAttribute("hidden", "hidden")
-        }
-    }
-</script>
