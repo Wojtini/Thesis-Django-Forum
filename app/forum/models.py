@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 
 from django.db import models
 from django.db.models import QuerySet, Sum
@@ -55,19 +56,23 @@ class Thread(models.Model):
 
     @property
     def points(self) -> int:
-        return sum(abs(entry) for entry in Entry.objects.filter(thread=self))
+        if self.entries:
+            return sum(entry.points for entry in self.entries)
+        return 0
 
     @property
     def total_number_of_entries(self) -> int:
         return self.entries.count()
 
     @property
-    def entries(self):
+    def entries(self) -> Optional[QuerySet]:
         return Entry.objects.filter(thread=self)
 
     @property
     def update_date(self):
-        return self.entries.order_by("-update_date")[0].update_date
+        if self.entries:
+            return self.entries.order_by("-update_date")[0].update_date
+        return self.created_date
 
 
 class Image(models.Model):
@@ -98,7 +103,9 @@ class Entry(models.Model):
 
     @property
     def points(self) -> int:
-        return self.reviews.aggregate(Sum("points"))['points__sum']
+        if self.reviews:
+            return self.reviews.aggregate(Sum("points"))['points__sum']
+        return 0
 
 
 class Review(models.Model):

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for category, threads in data.items %}
+        {{ category }}<br>
+        {% for thread in threads %}
+            {{ thread.title }}<br>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

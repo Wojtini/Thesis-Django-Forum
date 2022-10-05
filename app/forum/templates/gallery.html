@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for image in images %}
+        <div id={{ image.id }}>
+            <img id="{{ image.id }}_original" onclick="toggle_resolution({{ image.id }})" src="{{ image.compressed_file.url }}">
+            <img id="{{ image.id }}_compressed" onclick="toggle_resolution({{ image.id }})" loading="lazy" src="{{ image.original_file.url }}" hidden>
+            <br>
+        </div>
+    {% endfor %}
+
+    <script>
+        function toggle_resolution(id) {
+            let compressed = document.getElementById(id + "_compressed")
+            let original = document.getElementById(id+"_original")
+            if (compressed.hasAttribute("hidden")){
+                compressed.removeAttribute("hidden")
+                original.setAttribute("hidden", "hidden")
+            }else{
+                original.removeAttribute("hidden")
+                compressed.setAttribute("hidden", "hidden")
+            }
+        }
+    </script>
+{% endblock %}

@@ -2,6 +2,16 @@
 {% block content %}
 
     {% for thread in threads %}
-      {{ thread.title }} <br>
+        <a href="/thread/{{ thread.id }}">
+            <div>
+                title {{ thread.title }} <br>
+                description {{ thread.description }} <br>
+                category {{ thread.category }} <br>
+                created {{ thread.created_date }} <br>
+                update {{ thread.update_date }} <br>
+                entries {{ thread.total_number_of_entries }} <br>
+                p {{ thread.points }} <br>
+            </div>
+        </a><br><br><br><br>
     {% endfor %}
 {% endblock %}

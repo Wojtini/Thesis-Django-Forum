@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from forum import models
 from forum.forms import EntryForm
-from forum.models import Image, Entry
+from forum.models import Image, Entry, Category
 from PIL import Image as PImage
 from forum.user_verification import user_verification
 
@@ -92,6 +92,43 @@ class ThreadView(View):
             return HttpResponseRedirect(request.path_info)
 
         return render(request, self.template_name, {"form": form})
+
+
+class CategoryView(View):
+    template_name = "category.html"
+
+    @user_verification
+    def get(self, request, *args, **kwargs):
+        data = {
+            category: category.threads
+            for category in Category.objects.all()
+            if not category.is_empty
+        }
+        return render(
+            request,
+            self.template_name,
+            context=
+            {
+                "user": kwargs.get("user"),
+                "data": data,
+            }
+        )
+
+
+class GalleryView(View):
+    template_name = "gallery.html"
+
+    def get(self, request, *args, **kwargs):
+        images = [image for image in Image.objects.all()]
+        return render(
+            request,
+            self.template_name,
+            context=
+            {
+                "user": kwargs.get("user"),
+                "images": images,
+            }
+        )
 
 
 def compress(image):
