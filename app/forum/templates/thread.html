@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-    token
-    {% csrf_token %}
+    {{ thread }}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Submit">
     </form>
+
     <section id="section_main">
-        {% for entry in entries %}
+        {% for entry in thread.entries %}
             {% include "entry.html" with entry=entry %}
         {% endfor %}
     </section>

@@ -8,7 +8,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG_MODE") == "True"
 
 ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost"]
-CSRF_TRUSTED_ORIGINS = ['https://milepogawedki.xyz']
+CSRF_TRUSTED_ORIGINS = ["https://milepogawedki.xyz"]
 
 # Application definition
 
@@ -20,8 +20,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "forum.apps.ForumConfig",
-    'django_crontab',
-    'channels',
+    "django_crontab",
+    "channels",
+    "captcha",
 ]
 
 MIDDLEWARE = [

@@ -8,5 +8,5 @@ urlpatterns = [
     path("", Index.as_view(), name="home"),
     path("categories/", CategoryView.as_view(), name="category"),
     path("gallery/", GalleryView.as_view(), name="gallery"),
-    path('thread/<int:thread_id>', ThreadView.as_view(), name="thread"),
+    path("thread/<int:thread_id>", ThreadView.as_view(), name="thread"),
 ]

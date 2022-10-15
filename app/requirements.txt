@@ -47,7 +47,13 @@ django==4.1
     #   -r requirements.in
     #   channels
     #   django-crontab
+    #   django-ranged-response
+    #   django-simple-captcha
 django-crontab==0.7.1
+    # via -r requirements.in
+django-ranged-response==0.2.0
+    # via django-simple-captcha
+django-simple-captcha==0.5.17
     # via -r requirements.in
 hiredis==2.0.0
     # via aioredis
@@ -64,7 +70,9 @@ incremental==21.3.0
 msgpack==1.0.4
     # via channels-redis
 pillow==9.2.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   django-simple-captcha
 psycopg2==2.9.3
     # via -r requirements.in
 pyasn1==0.4.8

@@ -1,8 +1,8 @@
 import uuid
-from typing import Optional
+from typing import Optional, Iterable
 
 from django.db import models
-from django.db.models import QuerySet, Sum
+from django.db.models import QuerySet
 from django.utils import timezone
 
 
@@ -15,10 +15,6 @@ class User(models.Model):
     @property
     def entries(self) -> QuerySet:
         return Entry.objects.filter(creator=self)
-
-    @property
-    def points(self) -> int:
-        return sum(item.points for item in self.entries)
 
     def __str__(self) -> str:
         return f"{name if (name := self.display_name) else 'NO_NAME'}: {self.identifier}"
@@ -43,6 +39,10 @@ class Category(models.Model):
     def threads(self) -> QuerySet:
         return Thread.objects.filter(category=self)
 
+    @staticmethod
+    def all_non_empty() -> Iterable['Category']:
+        return Category.objects.all()
+
 
 class Thread(models.Model):
     title = models.CharField(max_length=64)
@@ -53,12 +53,6 @@ class Thread(models.Model):
 
     def __str__(self) -> str:
         return f"{self.title} by {str(self.creator)}"
-
-    @property
-    def points(self) -> int:
-        if self.entries:
-            return sum(entry.points for entry in self.entries)
-        return 0
 
     @property
     def total_number_of_entries(self) -> int:
@@ -97,30 +91,7 @@ class Entry(models.Model):
     def __str__(self):
         return f"{self.thread}: {self.content}"
 
-    @property
-    def reviews(self) -> QuerySet:
-        return Review.objects.filter(entry=self)
-
-    @property
-    def points(self) -> int:
-        if self.reviews:
-            return self.reviews.aggregate(Sum("points"))['points__sum']
-        return 0
-
-
-class Review(models.Model):
-    points = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
-    creation_date = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("user", "entry")
-
-    def __str__(self):
-        return f"{self.id}"
-
 
 all_models = [
-    User, Entry, Review, Thread, Category, Image
+    User, Entry, Thread, Category, Image
 ]
