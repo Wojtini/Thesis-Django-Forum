@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+    {% for category in categories %}
+        {{ category }}<br>
+        {% for thread in category.threads %}
+            {{ thread.title }}<br>
+        {% endfor %}
+        <br><br><br>
+    {% endfor %}
+{% endblock %}

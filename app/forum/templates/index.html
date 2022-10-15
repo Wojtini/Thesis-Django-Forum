@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
     {% for thread in threads %}
-      {{ thread.title }} <br>
+        <a href="/thread/{{ thread.id }}">
+            <div>
+                title {{ thread.title }} <br>
+                description {{ thread.description }} <br>
+                category {{ thread.category }} <br>
+                created {{ thread.created_date }} <br>
+                update {{ thread.update_date }} <br>
+                entries {{ thread.total_number_of_entries }} <br>
+            </div>
+        </a><br><br><br><br>
     {% endfor %}
 {% endblock %}

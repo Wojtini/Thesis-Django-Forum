@@ -6,3 +6,4 @@ django-crontab==0.7.1
 daphne==3.0.2
 channels==3.0.5
 channels_redis==3.4.1
+django-simple-captcha==0.5.17
