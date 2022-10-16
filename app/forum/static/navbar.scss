@@ -1,0 +1,50 @@
+@import "settings";
+
+nav {
+    background-color: $secondary_color;
+    width: 100%;
+    display: inline-block;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        li {
+            display: inline-block;
+            padding: 20px;
+        }
+    }
+    @media (min-width: $small_device) {
+        .left_corner {
+            width: 25%;
+            float: left;
+        }
+
+        .middle {
+            width: 50%;
+            text-align: center;
+            margin: auto;
+        }
+
+        .right_corner {
+            width: 25%;
+            float: right;
+        }
+    }
+}
+
+@media (max-width: $small_device) {
+    nav {
+        display: block;
+
+        ul {
+            li {
+                display: block;
+            }
+        }
+        .right_corner {
+            padding: 20px;
+        }
+    }
+}

@@ -1,0 +1,36 @@
+@import "settings";
+
+
+.container {
+    background-color: $secondary_color;
+    color: $font_color;
+    margin-bottom: 20px;
+
+    display: grid;
+    grid-template-columns: 1fr 20fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    .container_creator {
+        font-size: $smaller_font_size;
+    }
+
+    .container_header {
+        font-size: $bigger_font_size;
+    }
+
+    .div1 {
+        grid-area: 1 / 1 / 2 / 2;
+        background-color: $tertiary_color;
+        margin-right: 5px;
+    }
+    .div2 {
+        grid-area: 1 / 2 / 2 / 3;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
+
+}

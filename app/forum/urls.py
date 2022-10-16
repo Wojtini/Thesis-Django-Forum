@@ -1,12 +1,13 @@
 from django.urls import path
 
-from forum.views import Index, ThreadView, CategoryView, GalleryView
+from forum.views import Index, ThreadView, CategoryListView, GalleryView, CategoryView
 
 app_name = "forum"
 
 urlpatterns = [
     path("", Index.as_view(), name="home"),
-    path("categories/", CategoryView.as_view(), name="category"),
+    path("categories/", CategoryListView.as_view(), name="category"),
     path("gallery/", GalleryView.as_view(), name="gallery"),
-    path("thread/<int:thread_id>", ThreadView.as_view(), name="thread"),
+    path("thread/<str:thread_name>", ThreadView.as_view(), name="thread"),
+    path("category/<str:category_name>", CategoryView.as_view(), name="thread"),
 ]

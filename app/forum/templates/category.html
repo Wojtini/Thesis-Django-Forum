@@ -1,15 +1,13 @@
 {% extends "base.html" %}
+
+{% block before_content %}
+    {% include "category_panel.html" with category=category %}
+{% endblock %}
+
 {% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit">
-    </form>
-    {% for category in categories %}
-        {{ category }}<br>
-        {% for thread in category.threads %}
-            {{ thread.title }}<br>
-        {% endfor %}
-        <br><br><br>
+    {% for thread in threads %}
+        <a href="/thread/{{ thread.title }}">
+            {% include "thread.html" with thread=thread extra="true" %}
+        </a>
     {% endfor %}
 {% endblock %}

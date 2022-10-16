@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    {% for category in categories %}
+        <a href="/category/{{ category.name }}">
+            {% include "category_panel.html" with category=category %}
+        </a>
+    {% endfor %}
+{% endblock %}

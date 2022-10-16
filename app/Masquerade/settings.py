@@ -7,7 +7,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = os.environ.get("DEBUG_MODE") == "True"
 
-ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost"]
+ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost", "192.168.1.2"]
 CSRF_TRUSTED_ORIGINS = ["https://milepogawedki.xyz"]
 
 # Application definition
@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "django_crontab",
     "channels",
     "captcha",
+    "compressor",
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,20 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
+
+COMPRESS_OFFLINE = not DEBUG
+LIBSASS_OUTPUT_STYLE = "compressed"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "../staticfiles")
