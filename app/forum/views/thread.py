@@ -22,7 +22,7 @@ class ThreadView(View):
 
     @user_verification
     def get(self, request, *args, **kwargs):
-        thread = models.Thread.objects.get(title=kwargs.get("thread_name"), indexed=True)
+        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
         return self._get_rendered_view(
             request,
@@ -34,7 +34,7 @@ class ThreadView(View):
     @user_verification
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
-        thread = models.Thread.objects.get(title=kwargs.get("thread_name"), indexed=True)
+        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
         if form.is_valid():
             entry = self._create_new_entry(user, thread.id, form)
