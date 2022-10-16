@@ -19,6 +19,6 @@ class Index(View):
             self.template_name,
             context={
                 "user": user,
-                "threads": sorted(models.Thread.objects.all(), key=lambda t: t.update_date, reverse=True)[0:3],
+                "threads": sorted(models.Thread.objects.filter(indexed=True), key=lambda t: t.update_date, reverse=True)[0:3],
             },
         )

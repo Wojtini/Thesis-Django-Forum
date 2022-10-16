@@ -20,6 +20,7 @@ class CategoryView(View):
     @user_verification
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
+        form.indexed = True
         category = models.Category.objects.get(name=kwargs.get("category_name"))
         user = kwargs.get("user")
         if form.is_valid():
@@ -28,6 +29,7 @@ class CategoryView(View):
                 creator=user,
                 description=form.cleaned_data.get("description"),
                 category=form.cleaned_data.get("category"),
+                indexed=form.cleaned_data.get("indexed"),
             )
             new_thread.save()
         return self._get_rendered_view(request, user, category, form)
@@ -39,7 +41,7 @@ class CategoryView(View):
             context={
                 "user": user,
                 "category": category,
-                "threads": sorted(models.Thread.objects.all(), key=lambda t: t.update_date, reverse=True)[0:3],
+                "threads": sorted(models.Thread.objects.filter(category=category, indexed=True), key=lambda t: t.update_date, reverse=True),
                 "form": form,
             },
         )
