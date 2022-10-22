@@ -1,16 +1,17 @@
 {% load datetime_extras %}
 
-<div class="container">
+<div class="container"  id="{{ entry.id }}">
     <div class="div1">
         <img class="user_icon" src={{ entry.creator.identicon.url }}>
+        <button onclick="add_reply({{ entry.id }})">reply</button>
     </div>
     <div class="div2" id={{ entry.id }}>
 
         <div class="container_title">
-            {{ entry.creator }}:
+            {{ entry.creator }}: #{{ entry.id }}
         </div>
         <div class="container_content">
-            <pre>{{ entry.content }}</pre>
+            <pre>{{ entry.with_links|safe }}</pre>
         </div>
         <div class="container_image">
             <img id="{{ entry.id }}_compressed" onclick="toggle_resolution({{ entry.id }})" src="{{ entry.attached_image.mini_file.url }}">

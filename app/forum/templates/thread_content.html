@@ -9,6 +9,14 @@
     </section>
 
     <script>
+        const form = document.getElementById("form");
+
+        function add_reply(entry_id){
+            let form_content = document.getElementById("id_content");
+            form_content.append(" #" + entry_id + " ")
+        }
+
+
         const main_section = document.getElementById("section_main");
         const thread_id = {{ thread.id }};
         const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";

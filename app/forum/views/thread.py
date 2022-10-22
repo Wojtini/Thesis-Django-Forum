@@ -71,7 +71,7 @@ class ThreadView(BaseView):
         new_entry = Entry(
             creator=user,
             thread=models.Thread.objects.get(id=thread_id),
-            content=form.cleaned_data["content"],
+            content=str(form.cleaned_data["content"]).translate({"<": None}),
             attached_image=new_img,
             replied_to=None,
         )

@@ -1,3 +1,4 @@
+import re
 import uuid
 from typing import Optional, Iterable
 
@@ -99,6 +100,14 @@ class Entry(models.Model):
 
     def __str__(self):
         return f"{self.thread}: {self.content}"
+
+    @property
+    def with_links(self):
+        result = self.content
+        splitted = re.findall(r"#[0-9]+", self.content)
+        for link in splitted:
+            result = result.replace(link, f"<a href='#{link[1:]}'>{link}</a>")
+        return result
 
 
 all_models = [
