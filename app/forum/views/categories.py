@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
@@ -31,9 +32,10 @@ class CategoryListView(BaseView):
                 creator=user,
             )
             new_category.save()
+            return HttpResponseRedirect(request.path_info)
         prerender = self._get_prerender_view(
             context={
                 "categories": Category.all_non_empty,
             }
         )
-        return self._get_rendered_view(request, user, prerender)
+        return self._get_rendered_view(request, user, prerender, additional_context={"form_message": "Invalid Data"})

@@ -54,6 +54,7 @@ class ThreadView(BaseView):
             request,
             user,
             prerender,
+            additional_context={"form_message": "Invalid Data"},
         )
 
     @staticmethod

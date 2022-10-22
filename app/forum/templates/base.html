@@ -14,7 +14,7 @@
 
     {% if form %}
         <div class="formdiv" id="form">
-            Close
+            {{ form_message }}
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form }}

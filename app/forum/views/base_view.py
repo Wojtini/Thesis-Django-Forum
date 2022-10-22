@@ -8,7 +8,9 @@ class BaseView(View):
     prerender_template = None
     form_class = None
 
-    def _get_rendered_view(self, request, user, prerender):
+    def _get_rendered_view(self, request, user, prerender, additional_context=None):
+        if additional_context is None:
+            additional_context = {}
         return render(
             request,
             self.template_name,
@@ -16,6 +18,7 @@ class BaseView(View):
                 "user": user,
                 "prerender": prerender,
                 "form": self.form_class,
+                **additional_context,
             },
         )
 

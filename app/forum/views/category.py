@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from forum import models
@@ -38,10 +39,11 @@ class CategoryView(BaseView):
                 indexed=form.cleaned_data.get("indexed"),
             )
             new_thread.save()
+            return HttpResponseRedirect(request.path_info)
         prerender = self._get_prerender_view(
             context={
                 "category": category,
                 "threads": sorted(models.Thread.objects.filter(category=category, indexed=True), key=lambda t: t.update_date, reverse=True),
             }
         )
-        return self._get_rendered_view(request, user, prerender)
+        return self._get_rendered_view(request, user, prerender, additional_context={"form_message": "Invalid Data"})
