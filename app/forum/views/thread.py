@@ -17,12 +17,12 @@ from forum.user_verification import user_verification
 
 
 class ThreadView(View):
-    template_name = "thread.html"
+    template_name = "thread_content.html"
     form_class = EntryForm
 
     @user_verification
     def get(self, request, *args, **kwargs):
-        thread = models.Thread.objects.get(id=kwargs.get("thread_id"))
+        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
         return self._get_rendered_view(
             request,
@@ -34,7 +34,7 @@ class ThreadView(View):
     @user_verification
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
-        thread = models.Thread.objects.get(id=kwargs.get("thread_id"))
+        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
         if form.is_valid():
             entry = self._create_new_entry(user, thread.id, form)
@@ -66,7 +66,8 @@ class ThreadView(View):
                 name="Test",
                 user=None,
                 original_file=new_img,
-                compressed_file=ThreadView._compress(new_img),
+                thumbnail_file=ThreadView._compress(new_img, 512),
+                mini_file=ThreadView._compress(new_img, 256),
             )
             new_img.save()
         new_entry = Entry(
@@ -91,8 +92,8 @@ class ThreadView(View):
         )
 
     @staticmethod
-    def _compress(image):
-        size = 128, 128
+    def _compress(image, size):
+        size = size, size
         im = PImage.open(image)
         im_io = BytesIO()
         im.thumbnail(size, PImage.ANTIALIAS)

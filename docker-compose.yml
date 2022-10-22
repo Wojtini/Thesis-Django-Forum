@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   db:
-    image: postgres
+    image: postgres:14
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -13,7 +13,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
   web:
     build: .
-    command: sh -c "cd app && rm /app/staticfiles -r && python manage.py collectstatic && daphne -b 0.0.0.0 -p 8000 Masquerade.asgi:application"
+    command: sh -c "cd app && rm /app/staticfiles -r && python manage.py collectstatic && python manage.py compress --force && daphne -b 0.0.0.0 -p 8000 Masquerade.asgi:application"
     volumes:
       - .:/app
     environment:

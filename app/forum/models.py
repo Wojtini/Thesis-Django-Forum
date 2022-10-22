@@ -3,7 +3,6 @@ from typing import Optional, Iterable
 
 from django.db import models
 from django.db.models import QuerySet
-from django.utils import timezone
 
 
 class User(models.Model):
@@ -11,6 +10,7 @@ class User(models.Model):
     password = models.CharField(null=False, max_length=128)
     display_name = models.CharField(editable=False, max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
+    identicon = models.ImageField(null=False)
 
     @property
     def entries(self) -> QuerySet:
@@ -21,8 +21,9 @@ class User(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    description = models.TextField(null=False, max_length=300)
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -45,11 +46,12 @@ class Category(models.Model):
 
 
 class Thread(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, unique=True)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     description = models.TextField(null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
+    indexed = models.BooleanField(verbose_name="Is indexed")
 
     def __str__(self) -> str:
         return f"{self.title} by {str(self.creator)}"
@@ -65,15 +67,23 @@ class Thread(models.Model):
     @property
     def update_date(self):
         if self.entries:
-            return self.entries.order_by("-update_date")[0].update_date
+            return self.entries.order_by("-creation_date")[0].creation_date
         return self.created_date
+
+    @property
+    def last_image(self) -> Optional["Image"]:
+        entries_with_images = self.entries.exclude(attached_image__isnull=True)
+        if last := entries_with_images.last():
+            return last.attached_image
+        return None
 
 
 class Image(models.Model):
     name = models.CharField(max_length=64)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     original_file = models.ImageField()
-    compressed_file = models.ImageField(null=True)
+    thumbnail_file = models.ImageField(null=True)
+    mini_file = models.ImageField(null=True)
 
     def __str__(self):
         return f"{self.original_file.name}"
@@ -86,7 +96,6 @@ class Entry(models.Model):
     attached_image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True)
     replied_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.thread}: {self.content}"

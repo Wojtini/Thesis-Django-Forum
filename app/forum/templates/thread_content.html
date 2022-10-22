@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+    {% include "thread.html" with thread=thread %}
+
+    <section id="section_main">
+        {% for entry in thread.entries %}
+            {% include "entry.html" with entry=entry %}
+        {% endfor %}
+    </section>
+
+    <script>
+        const main_section = document.getElementById("section_main");
+        const thread_id = {{ thread.id }};
+        const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+
+        const thread_update_socket = new WebSocket(
+            ws_scheme + "://" + window.location.host + "/ws/thread/" + thread_id + "/"
+        );
+
+        thread_update_socket.onmessage = function(e) {
+            const placeholder = document.createElement("div");
+            placeholder.innerHTML = e.data;
+            main_section.appendChild(placeholder.firstElementChild)
+        };
+
+        thread_update_socket.onclose = function(e) {
+            console.error('Chat socket closed');
+        };
+
+        function toggle_resolution(id) {
+            let compressed = document.getElementById(id + "_compressed")
+            let original = document.getElementById(id+"_original")
+            if (compressed.hasAttribute("hidden")){
+                compressed.removeAttribute("hidden")
+                original.setAttribute("hidden", "hidden")
+            }else{
+                original.removeAttribute("hidden")
+                compressed.setAttribute("hidden", "hidden")
+            }
+        }
+    </script>
+{% endblock %}

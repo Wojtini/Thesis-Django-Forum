@@ -46,10 +46,19 @@ django==4.1
     # via
     #   -r requirements.in
     #   channels
+    #   django-appconf
     #   django-crontab
     #   django-ranged-response
     #   django-simple-captcha
+django-appconf==1.0.5
+    # via django-compressor
+django-compressor==2.2
+    # via
+    #   -r requirements.in
+    #   django-libsass
 django-crontab==0.7.1
+    # via -r requirements.in
+django-libsass==0.7
     # via -r requirements.in
 django-ranged-response==0.2.0
     # via django-simple-captcha
@@ -67,6 +76,8 @@ idna==3.3
     #   twisted
 incremental==21.3.0
     # via twisted
+libsass==0.21.0
+    # via django-libsass
 msgpack==1.0.4
     # via channels-redis
 pillow==9.2.0
@@ -87,11 +98,16 @@ pyopenssl==22.0.0
     # via twisted
 pytz==2022.2.1
     # via -r requirements.in
+rcssmin==1.0.6
+    # via django-compressor
+rjsmin==1.0.12
+    # via django-compressor
 service-identity==21.1.0
     # via twisted
 six==1.16.0
     # via
     #   automat
+    #   libsass
     #   service-identity
 sqlparse==0.4.2
     # via django

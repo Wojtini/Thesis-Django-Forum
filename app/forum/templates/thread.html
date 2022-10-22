@@ -1,47 +1,28 @@
-{% extends "base.html" %}
-{% block content %}
-    {{ thread }}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit">
-    </form>
+{% load datetime_extras %}
 
-    <section id="section_main">
-        {% for entry in thread.entries %}
-            {% include "entry.html" with entry=entry %}
-        {% endfor %}
-    </section>
 
-    <script>
-        const main_section = document.getElementById("section_main");
-        const thread_id = {{ thread.id }};
-        const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-
-        const thread_update_socket = new WebSocket(
-            ws_scheme + "://" + window.location.host + "/ws/thread/" + thread_id + "/"
-        );
-
-        thread_update_socket.onmessage = function(e) {
-            const placeholder = document.createElement("div");
-            placeholder.innerHTML = e.data;
-            main_section.appendChild(placeholder.firstElementChild)
-        };
-
-        thread_update_socket.onclose = function(e) {
-            console.error('Chat socket closed');
-        };
-
-        function toggle_resolution(id) {
-            let compressed = document.getElementById(id + "_compressed")
-            let original = document.getElementById(id+"_original")
-            if (compressed.hasAttribute("hidden")){
-                compressed.removeAttribute("hidden")
-                original.setAttribute("hidden", "hidden")
-            }else{
-                original.removeAttribute("hidden")
-                compressed.setAttribute("hidden", "hidden")
-            }
-        }
-    </script>
-{% endblock %}
+<div class="container">
+    <div class="div1">
+        <img class="user_icon" src={{ thread.creator.identicon.url }}>
+    </div>
+    <div class="div2">
+        <div class="container_creator">
+            created by: {{ thread.creator }} {{ thread.created_date|timesince|timesince_filter }}
+        </div>
+        <div class="container_header">
+            <b>{{ thread.title }}</b>
+        </div>
+        <div class="container_content">
+            {{ thread.description }}
+        </div>
+        {% if extra %}
+            <div class="container_image">
+                <img id="{{ thread.id }}_original" src="{{ thread.last_image.thumbnail_file.url }}">
+            </div>
+            <div class="container_footer">
+                💬 {{ thread.total_number_of_entries }} comments
+                Last update: {{ thread.update_date|timesince|timesince_filter }}
+            </div>
+        {% endif %}
+    </div>
+</div>

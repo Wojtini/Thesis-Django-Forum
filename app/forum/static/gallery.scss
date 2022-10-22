@@ -1,0 +1,20 @@
+@import "settings";
+
+
+.images {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: $secondary_color;
+
+    .image {
+        width: fit-content;
+        height: fit-content;
+        padding: 4px;
+        border: 2px;
+        margin: 20px;
+        background-color: $additional_color_2;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+}
+

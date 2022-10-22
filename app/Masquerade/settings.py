@@ -7,7 +7,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = os.environ.get("DEBUG_MODE") == "True"
 
-ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost"]
+ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost", "192.168.1.2"]
 CSRF_TRUSTED_ORIGINS = ["https://milepogawedki.xyz"]
 
 # Application definition
@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "django_crontab",
     "channels",
     "captcha",
+    "compressor",
 ]
 
 MIDDLEWARE = [
@@ -96,6 +97,20 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
+
+COMPRESS_OFFLINE = not DEBUG
+LIBSASS_OUTPUT_STYLE = "compressed"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "../staticfiles")
 
@@ -124,3 +139,18 @@ CHANNEL_LAYERS = {
 COOKIE_USER = "mq_user"
 COOKIE_PASS = "mq_pass"
 COOKIE_LIFETIME = 10*365*24*60*60
+
+# IDENTICON
+
+identicon_foregrounds = [
+    "rgb(45,79,255)",
+    "rgb(254,180,44)",
+    "rgb(226,121,234)",
+    "rgb(30,179,253)",
+    "rgb(232,77,65)",
+    "rgb(49,203,115)",
+    "rgb(141,69,170)",
+]
+identicon_background = "rgb(224,224,224)"
+identicon_padding = (10, 10, 10, 10)
+identicon_size = (10, 10)

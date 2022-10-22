@@ -1,0 +1,11 @@
+{% load compress %}
+{% load static %}
+
+{% compress css %}
+    <link type="text/x-scss" href="{% static "main.scss" %}" rel="stylesheet" media="screen">
+    <link type="text/x-scss" href="{% static "forms.scss" %}" rel="stylesheet" media="screen">
+    <link type="text/x-scss" href="{% static "navbar.scss" %}" rel="stylesheet" media="screen">
+    <link type="text/x-scss" href="{% static "container.scss" %}" rel="stylesheet" media="screen">
+    <link type="text/x-scss" href="{% static "gallery.scss" %}" rel="stylesheet" media="screen">
+    <link type="text/x-scss" href="{% static "category_panel.scss" %}" rel="stylesheet" media="screen">
+{% endcompress %}

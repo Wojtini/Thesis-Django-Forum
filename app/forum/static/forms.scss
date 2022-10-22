@@ -1,0 +1,53 @@
+@import "settings";
+
+.formdiv {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: auto;
+  background-color: $secondary_color;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+form {
+  display: flex;
+  flex-flow: row wrap;
+  flex-direction: column;
+  align-items: center;
+
+  label {
+    margin-top: 20px;
+  }
+
+  input[type=submit] {
+    margin-top: 20px;
+    padding: 15px;
+  }
+
+}
+@media (max-width: $small_device) {
+  .formdiv {
+    width: 100%;
+  }
+
+  form {
+    align-items: stretch;
+
+    input {
+      margin: 10px 0;
+      padding: 10px;
+    }
+
+    select {
+      padding: 10px;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

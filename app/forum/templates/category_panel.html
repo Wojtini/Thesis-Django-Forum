@@ -1,0 +1,21 @@
+{% load datetime_extras %}
+
+
+<div class="category_panel">
+    <div class="div1">
+    </div>
+    <div class="div2">
+        <div class="container_creator">
+            created by: {{ category.creator }}
+        </div>
+        <div class="container_header">
+            <b>About {{ category.name }} category</b>
+        </div>
+        <div class="container_content">
+            <pre>{{ category.description }}</pre>
+        </div>
+        <div class="container_footer">
+            {{ category.number_of_active_threads }}
+        </div>
+    </div>
+</div>
