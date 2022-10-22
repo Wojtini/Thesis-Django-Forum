@@ -7,7 +7,7 @@ class GalleryView(View):
     template_name = "gallery.html"
 
     def get(self, request, *args, **kwargs):
-        images = [image for image in Image.objects.all()]
+        images = [image for image in Image.objects.filter(entry__thread__indexed=True)]
         return render(
             request,
             self.template_name,

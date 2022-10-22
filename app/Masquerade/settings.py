@@ -139,3 +139,18 @@ CHANNEL_LAYERS = {
 COOKIE_USER = "mq_user"
 COOKIE_PASS = "mq_pass"
 COOKIE_LIFETIME = 10*365*24*60*60
+
+# IDENTICON
+
+identicon_foregrounds = [
+    "rgb(45,79,255)",
+    "rgb(254,180,44)",
+    "rgb(226,121,234)",
+    "rgb(30,179,253)",
+    "rgb(232,77,65)",
+    "rgb(49,203,115)",
+    "rgb(141,69,170)",
+]
+identicon_background = "rgb(224,224,224)"
+identicon_padding = (10, 10, 10, 10)
+identicon_size = (10, 10)

@@ -2,7 +2,9 @@
 
 
 <div class="container">
-    <div class="div1"></div>
+    <div class="div1">
+        <img class="user_icon" src={{ thread.creator.identicon.url }}>
+    </div>
     <div class="div2">
         <div class="container_creator">
             created by: {{ thread.creator }} {{ thread.created_date|timesince|timesince_filter }}

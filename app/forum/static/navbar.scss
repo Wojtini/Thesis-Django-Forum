@@ -1,5 +1,6 @@
 @import "settings";
 
+
 nav {
     background-color: $secondary_color;
     width: 100%;
@@ -15,7 +16,12 @@ nav {
             padding: 20px;
         }
     }
+    .right_corner {
+        display: inline-flex;
+    }
     @media (min-width: $small_device) {
+        height: $navbar_height;
+
         .left_corner {
             width: 25%;
             float: left;
@@ -47,4 +53,8 @@ nav {
             padding: 20px;
         }
     }
+}
+.logo {
+    height: $navbar_height;
+    width: $navbar_height;
 }

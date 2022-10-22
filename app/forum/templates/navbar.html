@@ -8,11 +8,16 @@
     </div>
     <div class="right_corner">
         {% if user %}
-            {% if user.display_name %}
-               username: {{ user.display_name }}
-            {% endif %}
-            user_id: {{ user.identifier }} <br>
-            created {{ user.created_at|timesince|timesince_filter }}
+            <div class="identicon">
+                <img class="logo" src={{ user.identicon.url }}>
+            </div>
+            <div class="userinfo">
+                {% if user.display_name %}
+                   username: {{ user.display_name }} <br>
+                {% endif %}
+                user_id: {{ user.identifier }} <br>
+                created {{ user.created_at|timesince|timesince_filter }}
+            </div>
         {% endif %}
     </div>
     <div class="middle">
@@ -22,4 +27,5 @@
           <li><a href="{% url 'forum:gallery' %}">Gallery</a></li>
         </ul>
     </div>
+
 </nav>

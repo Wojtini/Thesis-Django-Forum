@@ -3,7 +3,6 @@ from typing import Optional, Iterable
 
 from django.db import models
 from django.db.models import QuerySet
-from django.utils import timezone
 
 
 class User(models.Model):
@@ -11,6 +10,7 @@ class User(models.Model):
     password = models.CharField(null=False, max_length=128)
     display_name = models.CharField(editable=False, max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
+    identicon = models.ImageField(null=False)
 
     @property
     def entries(self) -> QuerySet:

@@ -1,7 +1,9 @@
 {% load datetime_extras %}
 
 <div class="container">
-    <div class="div1"></div>
+    <div class="div1">
+        <img class="user_icon" src={{ entry.creator.identicon.url }}>
+    </div>
     <div class="div2" id={{ entry.id }}>
 
         <div class="container_title">

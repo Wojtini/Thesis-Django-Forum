@@ -1,11 +1,14 @@
 import logging
+import os
 import uuid
 from dataclasses import dataclass
 from typing import Optional
 
+import pydenticon
 from django.contrib.auth.hashers import make_password, check_password
 
-from Masquerade.settings import COOKIE_PASS, COOKIE_USER, COOKIE_LIFETIME
+from Masquerade.settings import COOKIE_PASS, COOKIE_USER, COOKIE_LIFETIME, MEDIA_ROOT, identicon_size, \
+    identicon_padding, identicon_background, identicon_foregrounds
 from forum.models import User
 
 
@@ -72,8 +75,28 @@ def create_user() -> UserPassword:
         hasher="default",
     )
     new_user.password = hashed_password
+    new_user.identicon = create_identicon(new_user.identifier)
     new_user.save()
     return UserPassword(model=new_user, password=password)
+
+
+def create_identicon(username: uuid.UUID) -> str:
+    username = str(username)
+    username = "".join(username.split("-"))
+    logger.info(f"Creating new identicon for {username}")
+    size_x, size_y = identicon_size
+    generator = pydenticon.Generator(
+        size_x,
+        size_y,
+        foreground=identicon_foregrounds,
+        background=identicon_background,
+    )
+    identicon = generator.generate(username, 200, 200, output_format="png", padding=identicon_padding)
+    filepath = os.path.join(MEDIA_ROOT, f"{username}.png")
+    with open(filepath, "wb") as file:
+        file.write(identicon)
+    logger.info(f"Created new identicon at {filepath}")
+    return f"{username}.png"
 
 
 def verify_user(user_id: str, password: str) -> Optional[User]:

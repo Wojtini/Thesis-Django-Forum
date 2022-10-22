@@ -9,3 +9,4 @@ channels_redis==3.4.1
 django-simple-captcha==0.5.17
 django_compressor==4.1
 django-libsass==0.9
+pydenticon==0.3.1
