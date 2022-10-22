@@ -4,13 +4,11 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.files import File
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.template import loader
-from django.views import View
 
 from forum import models
 from forum.forms import EntryForm
-from forum.models import Image, Entry, Thread, User
+from forum.models import Image, Entry
 from PIL import Image as PImage
 
 from forum.user_verification import user_verification
@@ -21,7 +19,7 @@ class ThreadView(BaseView):
     prerender_template = "thread_content.html"
     form_class = EntryForm
 
-    @user_verification
+    @user_verification(user_needed=False)
     def get(self, request, *args, **kwargs):
         thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
@@ -37,7 +35,7 @@ class ThreadView(BaseView):
             prerender,
         )
 
-    @user_verification
+    @user_verification(user_needed=True)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         thread = models.Thread.objects.get(title=kwargs.get("thread_name"))

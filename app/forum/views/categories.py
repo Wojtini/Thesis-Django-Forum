@@ -11,7 +11,7 @@ class CategoryListView(BaseView):
     prerender_template = "categories_list.html"
     form_class = CategoryForm
 
-    @user_verification
+    @user_verification(user_needed=False)
     def get(self, request, *args, **kwargs):
         user = kwargs.get("user")
         prerender = self._get_prerender_view(
@@ -21,7 +21,7 @@ class CategoryListView(BaseView):
         )
         return self._get_rendered_view(request, user, prerender)
 
-    @user_verification
+    @user_verification(user_needed=True)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         user = kwargs.get("user")

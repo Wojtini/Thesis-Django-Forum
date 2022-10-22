@@ -11,7 +11,7 @@ class CategoryView(BaseView):
     prerender_template = "category.html"
     form_class = ThreadForm
 
-    @user_verification
+    @user_verification(user_needed=False)
     def get(self, request, *args, **kwargs):
         user = kwargs.get("user")
         category = models.Category.objects.get(name=kwargs.get("category_name"))
@@ -23,7 +23,7 @@ class CategoryView(BaseView):
         )
         return self._get_rendered_view(request, user, prerender)
 
-    @user_verification
+    @user_verification(user_needed=True)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         form.indexed = True

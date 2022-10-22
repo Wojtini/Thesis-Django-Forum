@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 class GalleryView(BaseView):
     prerender_template = "gallery.html"
 
+    @user_verification(user_needed=False)
     def get(self, request, *args, **kwargs):
         # if cached := cache.get('images'):
         #     logger.info("Getting from cache")

@@ -27,31 +27,33 @@ class UserPassword:
     password: str
 
 
-def user_verification(func):
-    def inner(*args, **kwargs):
-        request = args[0].request
-        if user := get_user(request):
-            kwargs.update({"user": user})
-        else:
-            new_user = create_user()
-            kwargs.update(
-                {
-                    "user": new_user.model,
-                    "cookies_to_set": [
-                        Cookie(COOKIE_USER, new_user.model.identifier),
-                        Cookie(COOKIE_PASS, new_user.password),
-                    ]
-                }
-            )
-            logger.info(f"{new_user.model.identifier}: Created a new user")
+def user_verification(user_needed):
+    def outer(func):
+        def inner(*args, **kwargs):
+            request = args[0].request
+            if user := get_user(request):
+                kwargs.update({"user": user})
+            elif user_needed:
+                new_user = create_user()
+                kwargs.update(
+                    {
+                        "user": new_user.model,
+                        "cookies_to_set": [
+                            Cookie(COOKIE_USER, new_user.model.identifier),
+                            Cookie(COOKIE_PASS, new_user.password),
+                        ]
+                    }
+                )
+                logger.info(f"{new_user.model.identifier}: Created a new user")
 
-        response = func(*args, **kwargs)
+            response = func(*args, **kwargs)
 
-        for cookie in kwargs.get("cookies_to_set", []):
-            response.set_cookie(cookie.key, cookie.value, COOKIE_LIFETIME)
+            for cookie in kwargs.get("cookies_to_set", []):
+                response.set_cookie(cookie.key, cookie.value, COOKIE_LIFETIME)
 
-        return response
-    return inner
+            return response
+        return inner
+    return outer
 
 
 def get_user(request) -> Optional[User]:
