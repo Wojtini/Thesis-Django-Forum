@@ -1,21 +1,27 @@
 from django.shortcuts import render
-from django.views import View
 
 from forum import models
 from forum.forms import ThreadForm
 from forum.models import Thread
 from forum.user_verification import user_verification
+from forum.views.base_view import BaseView
 
 
-class CategoryView(View):
-    template_name = "category.html"
+class CategoryView(BaseView):
+    prerender_template = "category.html"
     form_class = ThreadForm
 
     @user_verification
     def get(self, request, *args, **kwargs):
         user = kwargs.get("user")
         category = models.Category.objects.get(name=kwargs.get("category_name"))
-        return self._get_rendered_view(request, user, category, self.form_class)
+        prerender = self._get_prerender_view(
+            context={
+                "category": category,
+                "threads": sorted(models.Thread.objects.filter(category=category, indexed=True), key=lambda t: t.update_date, reverse=True),
+            }
+        )
+        return self._get_rendered_view(request, user, prerender)
 
     @user_verification
     def post(self, request, *args, **kwargs):
@@ -32,16 +38,10 @@ class CategoryView(View):
                 indexed=form.cleaned_data.get("indexed"),
             )
             new_thread.save()
-        return self._get_rendered_view(request, user, category, form)
-
-    def _get_rendered_view(self, request, user, category, form):
-        return render(
-            request,
-            self.template_name,
+        prerender = self._get_prerender_view(
             context={
-                "user": user,
                 "category": category,
                 "threads": sorted(models.Thread.objects.filter(category=category, indexed=True), key=lambda t: t.update_date, reverse=True),
-                "form": form,
-            },
+            }
         )
+        return self._get_rendered_view(request, user, prerender)

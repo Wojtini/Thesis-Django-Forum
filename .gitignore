@@ -135,7 +135,7 @@ postgres-data
 .idea
 
 # Certbot data
-data
+certs
 
 #static files
 staticfiles

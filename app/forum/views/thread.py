@@ -14,21 +14,27 @@ from forum.models import Image, Entry, Thread, User
 from PIL import Image as PImage
 
 from forum.user_verification import user_verification
+from forum.views.base_view import BaseView
 
 
-class ThreadView(View):
-    template_name = "thread_content.html"
+class ThreadView(BaseView):
+    prerender_template = "thread_content.html"
     form_class = EntryForm
 
     @user_verification
     def get(self, request, *args, **kwargs):
         thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
+
+        prerender = self._get_prerender_view(
+            context={
+                "thread": thread,
+            }
+        )
         return self._get_rendered_view(
             request,
             user,
-            thread,
-            self.form_class,
+            prerender,
         )
 
     @user_verification
@@ -41,22 +47,15 @@ class ThreadView(View):
             self._update_connected_clients(entry)
             return HttpResponseRedirect(request.path_info)
 
+        prerender = self._get_prerender_view(
+            context={
+                "thread": thread,
+            }
+        )
         return self._get_rendered_view(
             request,
             user,
-            thread,
-            form,
-        )
-
-    def _get_rendered_view(self, request, user: User, thread: Thread, form):
-        return render(
-            request,
-            self.template_name,
-            context={
-                "user": user,
-                "thread": thread,
-                "form": form,
-            }
+            prerender,
         )
 
     @staticmethod

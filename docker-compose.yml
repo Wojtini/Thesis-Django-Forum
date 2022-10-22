@@ -26,6 +26,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
   nginx:
     build: ./nginx
     ports:
@@ -38,6 +39,7 @@ services:
       - ./media:/media
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
+      - ./certs:/etc/app_certs
   redis:
     image: redis:alpine
     ports:

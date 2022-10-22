@@ -1,6 +1,6 @@
 from django.urls import path
 
-from forum.views import Index, ThreadView, CategoryListView, GalleryView, CategoryView
+from forum.views import Index, ThreadView, CategoryListView, CategoryView, GalleryView
 
 app_name = "forum"
 

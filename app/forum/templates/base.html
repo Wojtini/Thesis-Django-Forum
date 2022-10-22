@@ -9,13 +9,8 @@
 <body>
     {% include "navbar.html" %}
 
-    <div class="before_content">
-        {% block before_content %}{% endblock %}
-    </div>
 
-    <div class="content">
-        {% block content %}{% endblock %}
-    </div>
+    {{ prerender }}
 
     {% if form %}
         <div class="formdiv" id="form">

@@ -1,24 +1,20 @@
-from django.shortcuts import render
-from django.views import View
-
 from forum import models
-from forum.user_verification import user_verification
+from forum.views.base_view import BaseView
 
 
-class Index(View):
-    template_name = "index.html"
+class Index(BaseView):
+    prerender_template = "index.html"
 
-    @user_verification
     def get(self, request, *args, **kwargs):
         user = kwargs.get("user")
-        return self._get_rendered_view(request, user)
-
-    def _get_rendered_view(self, request, user):
-        return render(
-            request,
-            self.template_name,
+        threads = sorted(models.Thread.objects.filter(indexed=True), key=lambda t: t.update_date, reverse=True)[0:3]
+        prerender = self._get_prerender_view(
             context={
-                "user": user,
-                "threads": sorted(models.Thread.objects.filter(indexed=True), key=lambda t: t.update_date, reverse=True)[0:3],
-            },
+                "threads": threads,
+            }
+        )
+        return self._get_rendered_view(
+            request,
+            user,
+            prerender=prerender,
         )

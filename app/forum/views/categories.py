@@ -4,16 +4,22 @@ from django.views import View
 from forum.forms import CategoryForm
 from forum.models import Category
 from forum.user_verification import user_verification
+from forum.views.base_view import BaseView
 
 
-class CategoryListView(View):
-    template_name = "categories_list.html"
+class CategoryListView(BaseView):
+    prerender_template = "categories_list.html"
     form_class = CategoryForm
 
     @user_verification
     def get(self, request, *args, **kwargs):
         user = kwargs.get("user")
-        return self._get_rendered_view(request, user, self.form_class)
+        prerender = self._get_prerender_view(
+            context={
+                "categories": Category.all_non_empty,
+            }
+        )
+        return self._get_rendered_view(request, user, prerender)
 
     @user_verification
     def post(self, request, *args, **kwargs):
@@ -25,16 +31,9 @@ class CategoryListView(View):
                 creator=user,
             )
             new_category.save()
-        return self._get_rendered_view(request, user, form)
-
-    def _get_rendered_view(self, request, user, form):
-        return render(
-            request,
-            self.template_name,
-            context=
-            {
-                "user": user,
+        prerender = self._get_prerender_view(
+            context={
                 "categories": Category.all_non_empty,
-                "form": form,
             }
         )
+        return self._get_rendered_view(request, user, prerender)
