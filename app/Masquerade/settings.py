@@ -143,6 +143,7 @@ CACHES = {
 }
 GALLERY_CACHE = "gallery_cache"
 INDEX_CACHE = "index_cache"
+THREAD_CACHE = "thread_cache"
 
 # COOKIES NAMES
 

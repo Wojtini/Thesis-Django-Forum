@@ -6,6 +6,7 @@ from django.core.files import File
 from django.http import HttpResponseRedirect
 from django.template import loader
 
+from Masquerade.settings import THREAD_CACHE
 from forum import models
 from forum.forms import EntryForm
 from forum.models import Entry, EntryFile
@@ -19,21 +20,27 @@ from forum.views.base_view import BaseView
 class ThreadView(BaseView):
     prerender_template = "thread_content.html"
     form_class = EntryForm
+    # cache_location = THREAD_CACHE
+    cache_location = None
 
     @user_verification(user_needed=False)
     def get(self, request, *args, **kwargs):
-        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
-        user = kwargs.get("user")
-
-        prerender = self._get_prerender_view(
-            context={
-                "thread": thread,
-            }
-        )
+        kwargs.update({"suffix": kwargs.get("thread_name")})
         return self._get_rendered_view(
             request,
-            user,
-            prerender,
+            kwargs.get("user"),
+            prerender=self._get_prerender_from_cache(*args, **kwargs)
+            if self.cache_location else self._get_prerender_view(*args, **kwargs),
+        )
+
+    def _get_prerender_view(self, *args, **kwargs):
+        print(kwargs)
+        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
+        return loader.render_to_string(
+            self.prerender_template,
+            context={
+                "thread": thread,
+            },
         )
 
     @user_verification(user_needed=True)
@@ -47,11 +54,7 @@ class ThreadView(BaseView):
             self._update_connected_clients(entry)
             return HttpResponseRedirect(request.path_info)
 
-        prerender = self._get_prerender_view(
-            context={
-                "thread": thread,
-            }
-        )
+        prerender = self._get_prerender_view()
         return self._get_rendered_view(
             request,
             user,
@@ -59,11 +62,11 @@ class ThreadView(BaseView):
             additional_context={"form_message": "Invalid Data"},
         )
 
-    @staticmethod
-    def _create_new_entry(user, thread_id, form, files) -> Entry:
+    def _create_new_entry(self, user, thread_id, form, files) -> Entry:
+        thread = models.Thread.objects.get(id=thread_id)
         new_entry = Entry(
             creator=user,
-            thread=models.Thread.objects.get(id=thread_id),
+            thread=thread,
             content=str(form.cleaned_data["content"]),
             replied_to=None,
         )
@@ -71,6 +74,7 @@ class ThreadView(BaseView):
         for file in files:
             new_file = ThreadView._create_new_file(file)
             new_entry.attached_files.add(new_file)
+        self.clear_cache(thread.title)
         return new_entry
 
     @staticmethod

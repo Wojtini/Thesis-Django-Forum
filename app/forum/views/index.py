@@ -1,22 +1,19 @@
+from django.template import loader
+
+from Masquerade.settings import INDEX_CACHE
 from forum import models
-from forum.user_verification import user_verification
 from forum.views.base_view import BaseView
 
 
 class Index(BaseView):
     prerender_template = "index.html"
+    cache_location = INDEX_CACHE
 
-    @user_verification(user_needed=False)
-    def get(self, request, *args, **kwargs):
-        user = kwargs.get("user")
+    def _get_prerender_view(self, *args, **kwargs):
         threads = sorted(models.Thread.objects.filter(indexed=True), key=lambda t: t.update_date, reverse=True)[0:3]
-        prerender = self._get_prerender_view(
+        return loader.render_to_string(
+            self.prerender_template,
             context={
                 "threads": threads,
-            }
-        )
-        return self._get_rendered_view(
-            request,
-            user,
-            prerender=prerender,
+            },
         )
