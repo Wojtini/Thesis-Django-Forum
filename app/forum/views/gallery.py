@@ -1,5 +1,6 @@
 import logging
 
+from forum.models import EntryFile
 from forum.user_verification import user_verification
 from forum.views.base_view import BaseView
 
@@ -25,7 +26,7 @@ class GalleryView(BaseView):
         #     cache.set('images', prerender, 30*60)
         prerender = self._get_prerender_view(
             context={
-                # "images": [image for image in Image.objects.all()],
+                "images": [file for file in EntryFile.objects.all() if file.is_image],
             }
         )
         return self._get_rendered_view(
