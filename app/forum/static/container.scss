@@ -23,6 +23,11 @@
         width: 100%;
     }
 
+    .container_content {
+        max-height: 400px;
+        overflow: hidden;
+    }
+
     .container_creator {
         font-size: $smaller_font_size;
     }

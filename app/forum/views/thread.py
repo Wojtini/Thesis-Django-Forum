@@ -20,8 +20,7 @@ from forum.views.base_view import BaseView
 class ThreadView(BaseView):
     prerender_template = "thread_content.html"
     form_class = EntryForm
-    # cache_location = THREAD_CACHE
-    cache_location = None
+    cache_location = THREAD_CACHE
 
     @user_verification(user_needed=False)
     def get(self, request, *args, **kwargs):
@@ -34,7 +33,6 @@ class ThreadView(BaseView):
         )
 
     def _get_prerender_view(self, *args, **kwargs):
-        print(kwargs)
         thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         return loader.render_to_string(
             self.prerender_template,
@@ -45,25 +43,26 @@ class ThreadView(BaseView):
 
     @user_verification(user_needed=True)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
-        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
+        thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
+        form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             files = request.FILES.getlist("files")
-            entry = self._create_new_entry(user, thread.id, form, files)
+            entry = self._create_new_entry(user, thread, form, files)
             self._update_connected_clients(entry)
-            return HttpResponseRedirect(request.path_info)
+            print(request.path_info)
+            return HttpResponseRedirect(request.path_info + f"#{entry.id}")
 
-        prerender = self._get_prerender_view()
+        kwargs.update({"suffix": kwargs.get("thread_name")})
+        prerender = self._get_prerender_view(*args, **kwargs)
         return self._get_rendered_view(
             request,
             user,
             prerender,
-            additional_context={"form_message": "Invalid Data"},
+            additional_context={"form_message": form.errors},
         )
 
-    def _create_new_entry(self, user, thread_id, form, files) -> Entry:
-        thread = models.Thread.objects.get(id=thread_id)
+    def _create_new_entry(self, user, thread, form, files) -> Entry:
         new_entry = Entry(
             creator=user,
             thread=thread,

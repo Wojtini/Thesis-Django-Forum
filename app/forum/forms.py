@@ -9,7 +9,7 @@ class BaseForm(forms.Form):
 
 
 class EntryForm(BaseForm):
-    content = forms.CharField(label="text", max_length=200, widget=forms.Textarea)
+    content = forms.CharField(label="text", max_length=500, widget=forms.Textarea)
     files = forms.FileField(
         label="attached files",
         widget=forms.ClearableFileInput(

@@ -141,6 +141,7 @@ CACHES = {
         "LOCATION": "redis://redis:6379",
     }
 }
+DISABLE_CACHE = DEBUG
 GALLERY_CACHE = "gallery_cache"
 INDEX_CACHE = "index_cache"
 THREAD_CACHE = "thread_cache"
@@ -167,5 +168,5 @@ IDENTICON_PADDING = (10, 10, 10, 10)
 IDENTICON_SIZE = (10, 10)
 
 # DISPLAYABLE MEDIA
-DISPLAYABLE_IMAGES = [".png", ".jpg", ".gif"]
+DISPLAYABLE_IMAGES = [".png", ".jpg", ".gif", ".webp"]
 DISPLAYABLE_VIDEOS = [".mp4"]

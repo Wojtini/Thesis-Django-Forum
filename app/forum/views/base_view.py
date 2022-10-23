@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.views import View
 
+from Masquerade.settings import DISABLE_CACHE
 from forum.user_verification import user_verification
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,8 @@ class BaseView(View):
         )
 
     def _get_prerender_from_cache(self, *args, **kwargs):
-        print(kwargs)
+        if DISABLE_CACHE:
+            return self._get_prerender_view(*args, **kwargs)
         true_cache_location = self.cache_location + "/" + kwargs.get("suffix", "")
         if cached := cache.get(true_cache_location):
             logger.info(f"Getting {true_cache_location} from cache")
@@ -55,6 +57,7 @@ class BaseView(View):
         raise NotImplemented
 
     def clear_cache(self, suffix=""):
-        true_cache_location = self.cache_location + "/" + suffix
-        logger.info(f"Resetting {self.cache_location}{suffix} cache")
-        cache.set(true_cache_location, None)
+        if self.cache_location:
+            true_cache_location = self.cache_location + "/" + suffix
+            logger.info(f"Resetting {self.cache_location}{suffix} cache")
+            cache.set(true_cache_location, None)

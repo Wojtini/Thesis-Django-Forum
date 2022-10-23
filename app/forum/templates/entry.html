@@ -12,7 +12,15 @@
             {{ entry.creator }}: #{{ entry.id }}
         </div>
         <div class="container_content">
-            <pre>{{ entry.with_links|safe }}</pre>
+
+            {% for part in entry.with_links %}
+                {% if part.safe %}
+                    {{ part.value|safe }}
+                {% else %}
+                    <pre>{{ part.value }}</pre>
+                {% endif %}
+            {% endfor %}
+
         </div>
         <div class="container_image">
             {% for file in entry.attached_files.all %}

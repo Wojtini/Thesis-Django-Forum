@@ -122,10 +122,15 @@ class Entry(models.Model):
 
     @property
     def with_links(self):
-        result = self.content
-        splitted = re.findall(r"#[0-9]+", self.content)
-        for link in splitted:
-            result = result.replace(link, f"<a href='#{link[1:]}'>{link}</a>")
+        splitted = re.split(r"(#[0-9]+)", self.content)
+        result = [
+            {
+                "value": part if not re.search(r"(#[0-9]+)", part) else f"<a href='{part}'>{part}</a>",
+                "safe": re.search(r"(#[0-9]+)", part),
+            }
+            for part in splitted
+        ]
+        print(result)
         return result
 
 
