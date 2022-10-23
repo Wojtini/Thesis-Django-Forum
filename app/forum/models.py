@@ -6,7 +6,7 @@ from typing import Optional, Iterable
 from django.db import models
 from django.db.models import QuerySet
 
-from Masquerade.settings import DISPLAYABLE_IMAGES
+from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS
 
 
 class User(models.Model):
@@ -99,6 +99,13 @@ class EntryFile(models.Model):
         return any(
             str(self).endswith(extension)
             for extension in DISPLAYABLE_IMAGES
+        )
+
+    @property
+    def is_video(self):
+        return any(
+            str(self).endswith(extension)
+            for extension in DISPLAYABLE_VIDEOS
         )
 
 
