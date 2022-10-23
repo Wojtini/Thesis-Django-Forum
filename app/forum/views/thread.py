@@ -8,7 +8,7 @@ from django.template import loader
 
 from forum import models
 from forum.forms import EntryForm
-from forum.models import Image, Entry
+from forum.models import Entry, EntryFile
 from PIL import Image as PImage
 
 from forum.user_verification import user_verification
@@ -41,7 +41,8 @@ class ThreadView(BaseView):
         thread = models.Thread.objects.get(title=kwargs.get("thread_name"))
         user = kwargs.get("user")
         if form.is_valid():
-            entry = self._create_new_entry(user, thread.id, form)
+            files = request.FILES.getlist("files")
+            entry = self._create_new_entry(user, thread.id, form, files)
             self._update_connected_clients(entry)
             return HttpResponseRedirect(request.path_info)
 
@@ -58,25 +59,30 @@ class ThreadView(BaseView):
         )
 
     @staticmethod
-    def _create_new_entry(user, thread_id, form) -> Entry:
-        if new_img := form.cleaned_data.get("image"):
-            new_img = Image(
-                name="Test",
-                user=None,
-                original_file=new_img,
-                thumbnail_file=ThreadView._compress(new_img, 512),
-                mini_file=ThreadView._compress(new_img, 256),
-            )
-            new_img.save()
+    def _create_new_entry(user, thread_id, form, files) -> Entry:
         new_entry = Entry(
             creator=user,
             thread=models.Thread.objects.get(id=thread_id),
-            content=str(form.cleaned_data["content"]).translate({"<": None}),
-            attached_image=new_img,
+            content=str(form.cleaned_data["content"]),
             replied_to=None,
         )
         new_entry.save()
+        for file in files:
+            new_file = ThreadView._create_new_file(file)
+            new_entry.attached_files.add(new_file)
         return new_entry
+
+    @staticmethod
+    def _create_new_file(file) -> EntryFile:
+        new_file = EntryFile(
+            original_file=file,
+        )
+        new_file.save()
+        if new_file.is_image:
+            compressed = ThreadView._compress(file, 256)
+            new_file.compressed_file = compressed
+            new_file.save()
+        return new_file
 
     @staticmethod
     def _update_connected_clients(entry: Entry):
@@ -90,7 +96,7 @@ class ThreadView(BaseView):
         )
 
     @staticmethod
-    def _compress(image, size):
+    def _compress(image, size) -> File:
         size = size, size
         im = PImage.open(image)
         im_io = BytesIO()

@@ -150,7 +150,7 @@ COOKIE_LIFETIME = 10*365*24*60*60
 
 # IDENTICON
 
-identicon_foregrounds = [
+IDENTICON_FOREGROUNDS = [
     "rgb(45,79,255)",
     "rgb(254,180,44)",
     "rgb(226,121,234)",
@@ -159,6 +159,9 @@ identicon_foregrounds = [
     "rgb(49,203,115)",
     "rgb(141,69,170)",
 ]
-identicon_background = "rgb(224,224,224)"
-identicon_padding = (10, 10, 10, 10)
-identicon_size = (10, 10)
+IDENTICON_BACKGROUND = "rgb(224,224,224)"
+IDENTICON_PADDING = (10, 10, 10, 10)
+IDENTICON_SIZE = (10, 10)
+
+# DISPLAYABLE MEDIA
+DISPLAYABLE_IMAGES = [".png", ".jpg", ".gif"]

@@ -1,11 +1,4 @@
-import asyncio
 import logging
-
-from django.shortcuts import render
-from django.views import View
-
-from forum.models import Image
-from django.core.cache import cache
 
 from forum.user_verification import user_verification
 from forum.views.base_view import BaseView
@@ -32,7 +25,7 @@ class GalleryView(BaseView):
         #     cache.set('images', prerender, 30*60)
         prerender = self._get_prerender_view(
             context={
-                "images": [image for image in Image.objects.all()],
+                # "images": [image for image in Image.objects.all()],
             }
         )
         return self._get_rendered_view(

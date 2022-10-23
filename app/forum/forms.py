@@ -10,7 +10,7 @@ class BaseForm(forms.Form):
 
 class EntryForm(BaseForm):
     content = forms.CharField(label="text", max_length=200, widget=forms.Textarea)
-    image = forms.ImageField(label="attachment image", required=False)
+    files = forms.FileField(label="attached files", widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
 
 class CategoryForm(BaseForm):

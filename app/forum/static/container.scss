@@ -19,6 +19,13 @@
         text-decoration: underline;
     }
 
+    .container_image {
+        width: 100%;
+        img {
+            width: 60%;
+        }
+    }
+
     .container_creator {
         font-size: $smaller_font_size;
     }

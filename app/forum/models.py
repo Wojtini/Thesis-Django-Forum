@@ -1,9 +1,12 @@
+import os
 import re
 import uuid
 from typing import Optional, Iterable
 
 from django.db import models
 from django.db.models import QuerySet
+
+from Masquerade.settings import DISPLAYABLE_IMAGES
 
 
 class User(models.Model):
@@ -72,29 +75,38 @@ class Thread(models.Model):
         return self.created_date
 
     @property
-    def last_image(self) -> Optional["Image"]:
-        entries_with_images = self.entries.exclude(attached_image__isnull=True)
-        if last := entries_with_images.last():
-            return last.attached_image
+    def last_image(self) -> Optional["EntryFile"]:
+        files_in_thread = EntryFile.objects.filter(entry__thread=self)
+        images_in_thread = [
+            file
+            for file in files_in_thread
+            if file.is_image
+        ]
+        if len(images_in_thread) > 0 and (last := images_in_thread.pop()):
+            return last
         return None
 
 
-class Image(models.Model):
-    name = models.CharField(max_length=64)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    original_file = models.ImageField()
-    thumbnail_file = models.ImageField(null=True)
-    mini_file = models.ImageField(null=True)
+class EntryFile(models.Model):
+    original_file = models.FileField(null=True)
+    compressed_file = models.FileField(null=True)
 
     def __str__(self):
-        return f"{self.original_file.name}"
+        return self.original_file.name
+
+    @property
+    def is_image(self):
+        return any(
+            str(self).endswith(extension)
+            for extension in DISPLAYABLE_IMAGES
+        )
 
 
 class Entry(models.Model):
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     content = models.TextField()
-    attached_image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True)
+    attached_files = models.ManyToManyField(EntryFile)
     replied_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
 
@@ -111,5 +123,5 @@ class Entry(models.Model):
 
 
 all_models = [
-    User, Entry, Thread, Category, Image
+    User, Entry, Thread, Category, EntryFile
 ]

@@ -7,8 +7,8 @@ from typing import Optional
 import pydenticon
 from django.contrib.auth.hashers import make_password, check_password
 
-from Masquerade.settings import COOKIE_PASS, COOKIE_USER, COOKIE_LIFETIME, MEDIA_ROOT, identicon_size, \
-    identicon_padding, identicon_background, identicon_foregrounds
+from Masquerade.settings import COOKIE_PASS, COOKIE_USER, COOKIE_LIFETIME, MEDIA_ROOT, IDENTICON_SIZE, \
+    IDENTICON_PADDING, IDENTICON_BACKGROUND, IDENTICON_FOREGROUNDS
 from forum.models import User
 
 
@@ -86,14 +86,14 @@ def create_identicon(username: uuid.UUID) -> str:
     username = str(username)
     username = "".join(username.split("-"))
     logger.info(f"Creating new identicon for {username}")
-    size_x, size_y = identicon_size
+    size_x, size_y = IDENTICON_SIZE
     generator = pydenticon.Generator(
         size_x,
         size_y,
-        foreground=identicon_foregrounds,
-        background=identicon_background,
+        foreground=IDENTICON_FOREGROUNDS,
+        background=IDENTICON_BACKGROUND,
     )
-    identicon = generator.generate(username, 200, 200, output_format="png", padding=identicon_padding)
+    identicon = generator.generate(username, 200, 200, output_format="png", padding=IDENTICON_PADDING)
     filepath = os.path.join(MEDIA_ROOT, f"{username}.png")
     with open(filepath, "wb") as file:
         file.write(identicon)

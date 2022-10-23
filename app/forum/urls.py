@@ -6,8 +6,8 @@ app_name = "forum"
 
 urlpatterns = [
     path("", Index.as_view(), name="home"),
-    path("categories/", CategoryListView.as_view(), name="category"),
+    path("categories/", CategoryListView.as_view(), name="categories"),
     path("gallery/", GalleryView.as_view(), name="gallery"),
     path("thread/<str:thread_name>", ThreadView.as_view(), name="thread"),
-    path("category/<str:category_name>", CategoryView.as_view(), name="thread"),
+    path("category/<str:category_name>", CategoryView.as_view(), name="category"),
 ]

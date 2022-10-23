@@ -1,4 +1,5 @@
 {% load datetime_extras %}
+{% load static %}
 
 <div class="container"  id="{{ entry.id }}">
     <div class="div1">
@@ -14,8 +15,19 @@
             <pre>{{ entry.with_links|safe }}</pre>
         </div>
         <div class="container_image">
-            <img id="{{ entry.id }}_compressed" onclick="toggle_resolution({{ entry.id }})" src="{{ entry.attached_image.mini_file.url }}">
-            <img id="{{ entry.id }}_original" onclick="toggle_resolution({{ entry.id }})" loading="lazy" src="{{ entry.attached_image.original_file.url }}" hidden>
+            {% for file in entry.attached_files.all %}
+                {% if file.is_image %}
+                    {% if file.compressed_file %}
+                        <img id="{{ file.id }}_compressed" onclick="toggle_resolution({{ file.id }})" src="{{ file.compressed_file.url }}">
+                        <img id="{{ file.id }}_original" onclick="toggle_resolution({{ file.id }})" loading="lazy" src="{{ file.original_file.url }}" hidden>
+                    {% else %}
+                        <img id="{{ file.id }}_original" loading="lazy" src="{{ file.original_file.url }}">
+                    {% endif %}
+                {% else %}
+                    <a href="/media/{{ file.original_file }}" download>{{ file }}</a> {{ file.original_file.size|sizify }}
+                {% endif %}
+                <br>
+            {% endfor %}
         </div>
         <div class="container_footer">
             at {{ entry.creation_date|timesince|timesince_filter }}

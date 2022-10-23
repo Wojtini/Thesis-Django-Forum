@@ -28,7 +28,7 @@ services:
       - db
       - redis
   nginx:
-    build: ./nginx
+    build: ./nginx/nginx_prod
     ports:
       - "80:80"
       - "443:443"

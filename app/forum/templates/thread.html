@@ -17,7 +17,7 @@
         </div>
         {% if extra %}
             <div class="container_image">
-                <img id="{{ thread.id }}_original" src="{{ thread.last_image.thumbnail_file.url }}">
+                <img id="{{ thread.id }}_original" src="{{ thread.last_image.compressed_file.url }}">
             </div>
             <div class="container_footer">
                 💬 {{ thread.total_number_of_entries }} comments
