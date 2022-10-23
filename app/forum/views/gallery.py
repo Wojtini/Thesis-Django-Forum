@@ -17,7 +17,7 @@ class GalleryView(BaseView):
         return self._get_rendered_view(
             request,
             kwargs.get("user"),
-            prerender=self._get_prerender_view(
+            prerender=self._get_prerender_from_cache(
                 context={
                     "images": [file for file in EntryFile.objects.all() if file.is_image],
                 }

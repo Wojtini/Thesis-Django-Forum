@@ -26,7 +26,7 @@
                 {% elif file.is_video %}
                     <a href="/media/{{ file.original_file }}" download>{{ file }}</a> {{ file.original_file.size|sizify }}
                     <br>
-                    <video width="400" preload="none" controls>
+                    <video width="400" preload="metadata" controls>
                         <source src="{{ file.original_file.url }}" type="video/mp4">
                         Cannot preview video
                     </video>
