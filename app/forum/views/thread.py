@@ -12,6 +12,7 @@ from forum.models import Entry, EntryFile
 from PIL import Image as PImage
 
 from forum.user_verification import user_verification
+from forum.views import GalleryView
 from forum.views.base_view import BaseView
 
 
@@ -82,6 +83,7 @@ class ThreadView(BaseView):
             compressed = ThreadView._compress(file, 256)
             new_file.compressed_file = compressed
             new_file.save()
+            GalleryView().clear_cache()
         return new_file
 
     @staticmethod

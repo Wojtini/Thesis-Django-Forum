@@ -133,7 +133,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-# CHANELS
+# CACHES
 
 CACHES = {
     "default": {
@@ -141,6 +141,8 @@ CACHES = {
         "LOCATION": "redis://redis:6379",
     }
 }
+GALLERY_CACHE = "gallery_cache"
+INDEX_CACHE = "index_cache"
 
 # COOKIES NAMES
 
