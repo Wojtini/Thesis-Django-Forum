@@ -15,7 +15,7 @@ class CategoryListView(BaseView):
         return loader.render_to_string(
             self.prerender_template,
             context={
-                "categories": Category.all_non_empty,
+                "categories": Category.objects.all(),
             }
         )
 

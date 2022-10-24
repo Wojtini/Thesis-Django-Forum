@@ -24,16 +24,17 @@ class CategoryView(BaseView):
 
     @user_verification(user_needed=True)
     def post(self, request, *args, **kwargs):
+        category = models.Category.objects.get(name=kwargs.get("category_name"))
         form = self.form_class(request.POST, request.FILES)
-        form.indexed = True
         user = kwargs.get("user")
         if form.is_valid():
             new_thread = Thread(
                 title=form.cleaned_data.get("title"),
                 creator=user,
                 description=form.cleaned_data.get("description"),
-                category=form.cleaned_data.get("category"),
-                indexed=form.cleaned_data.get("indexed"),
+                category=category,
+                # indexed=form.cleaned_data.get("indexed"),
+                indexed=True,
             )
             new_thread.save()
             return HttpResponseRedirect(request.path_info)

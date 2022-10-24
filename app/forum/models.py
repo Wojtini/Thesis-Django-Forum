@@ -44,10 +44,6 @@ class Category(models.Model):
     def threads(self) -> QuerySet:
         return Thread.objects.filter(category=self)
 
-    @staticmethod
-    def all_non_empty() -> Iterable['Category']:
-        return Category.objects.all()
-
 
 class Thread(models.Model):
     title = models.CharField(max_length=64, unique=True)
@@ -130,7 +126,6 @@ class Entry(models.Model):
             }
             for part in splitted
         ]
-        print(result)
         return result
 
 
