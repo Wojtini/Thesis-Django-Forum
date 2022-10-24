@@ -11,8 +11,6 @@ from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS
 
 class User(models.Model):
     identifier = models.UUIDField(default=uuid.uuid4, null=False, primary_key=True, editable=False)
-    password = models.CharField(null=False, max_length=128)
-    display_name = models.CharField(editable=False, max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
     identicon = models.ImageField(null=False)
 
@@ -21,7 +19,7 @@ class User(models.Model):
         return Entry.objects.filter(creator=self)
 
     def __str__(self) -> str:
-        return f"{name if (name := self.display_name) else 'NO_NAME'}: {self.identifier}"
+        return f"{self.identifier}"
 
 
 class Category(models.Model):

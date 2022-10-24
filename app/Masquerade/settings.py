@@ -148,8 +148,7 @@ THREAD_CACHE = "thread_cache"
 
 # COOKIES NAMES
 
-COOKIE_USER = "mq_user"
-COOKIE_PASS = "mq_pass"
+COOKIE_NAME_JWT = "identificator"
 COOKIE_LIFETIME = 10*365*24*60*60
 
 # IDENTICON
