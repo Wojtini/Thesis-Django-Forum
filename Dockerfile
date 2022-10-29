@@ -4,6 +4,7 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 COPY /app .
+COPY /app/start_prod.sh /
 
 RUN pip install pip-tools
 RUN pip-compile

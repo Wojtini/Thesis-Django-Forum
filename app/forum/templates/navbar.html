@@ -18,6 +18,8 @@
                 user_id: {{ user.identifier }} <br>
                 created {{ user.created_at|timesince|timesince_filter }}
             </div>
+        {% else %}
+            <ul><li><a href="{% url 'forum:new_account' %}">Create new account</a></li></ul>
         {% endif %}
     </div>
     <div class="middle">

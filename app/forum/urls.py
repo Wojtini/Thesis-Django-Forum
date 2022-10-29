@@ -1,6 +1,6 @@
 from django.urls import path
 
-from forum.views import Index, ThreadView, CategoryListView, CategoryView, GalleryView
+from forum.views import Index, ThreadView, CategoryListView, CategoryView, GalleryView, AccountCreation
 
 app_name = "forum"
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path("gallery/", GalleryView.as_view(), name="gallery"),
     path("thread/<str:thread_name>", ThreadView.as_view(), name="thread"),
     path("category/<str:category_name>", CategoryView.as_view(), name="category"),
+    path("new_account", AccountCreation.as_view(), name="new_account"),
 ]

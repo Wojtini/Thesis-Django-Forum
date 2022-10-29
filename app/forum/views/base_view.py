@@ -35,7 +35,7 @@ class BaseView(View):
             context={
                 "user": user,
                 "prerender": prerender,
-                "form": self.form_class,
+                "form": self.form_class if user else None,
                 **additional_context,
             },
         )

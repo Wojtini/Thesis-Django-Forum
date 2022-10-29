@@ -13,7 +13,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
   web:
     build: .
-    command: sh -c "cd app && rm /app/staticfiles -r && python manage.py collectstatic && python manage.py compress --force && daphne -b 0.0.0.0 -p 8000 Masquerade.asgi:application"
+    command: ./app/start_prod.sh
     volumes:
       - .:/app
     environment:
