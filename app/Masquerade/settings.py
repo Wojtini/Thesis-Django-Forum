@@ -143,13 +143,15 @@ CACHES = {
 }
 DISABLE_CACHE = DEBUG
 GALLERY_CACHE = "gallery_cache"
+FILE_LIST_CACHE = "file_list_cache"
+USER_LIST_CACHE = "user_list_cache"
 INDEX_CACHE = "index_cache"
 THREAD_CACHE = "thread_cache"
 
 # COOKIES NAMES
 
 COOKIE_NAME_JWT = "identificator"
-COOKIE_LIFETIME = 10*365*24*60*60
+COOKIE_LIFETIME = 365*24*60*60
 
 # IDENTICON
 

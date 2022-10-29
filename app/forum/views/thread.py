@@ -13,7 +13,6 @@ from forum.models import Entry, EntryFile
 from PIL import Image as PImage
 
 from forum.user_verification import user_verification
-from forum.views import GalleryView
 from forum.views.base_view import BaseView
 
 
@@ -50,7 +49,6 @@ class ThreadView(BaseView):
             files = request.FILES.getlist("files")
             entry = self._create_new_entry(user, thread, form, files)
             self._update_connected_clients(entry)
-            print(request.path_info)
             return HttpResponseRedirect(request.path_info + f"#{entry.id}")
 
         kwargs.update({"suffix": kwargs.get("thread_name")})
@@ -73,7 +71,6 @@ class ThreadView(BaseView):
         for file in files:
             new_file = ThreadView._create_new_file(file)
             new_entry.attached_files.add(new_file)
-        self.clear_cache(thread.title)
         return new_entry
 
     @staticmethod
@@ -86,7 +83,6 @@ class ThreadView(BaseView):
             compressed = ThreadView._compress(file, 256)
             new_file.compressed_file = compressed
             new_file.save()
-            GalleryView().clear_cache()
         return new_file
 
     @staticmethod

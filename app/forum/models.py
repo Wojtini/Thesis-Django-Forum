@@ -18,6 +18,10 @@ class User(models.Model):
     def entries(self) -> QuerySet:
         return Entry.objects.filter(creator=self)
 
+    @property
+    def entries_amount(self) -> int:
+        return len(self.entries)
+
     def __str__(self) -> str:
         return f"{self.identifier}"
 

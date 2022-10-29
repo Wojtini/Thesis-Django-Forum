@@ -59,5 +59,5 @@ class BaseView(View):
     def clear_cache(self, suffix=""):
         if self.cache_location:
             true_cache_location = self.cache_location + "/" + suffix
-            logger.info(f"Resetting {self.cache_location}{suffix} cache")
+            logger.info(f"Resetting cache at {true_cache_location} location")
             cache.set(true_cache_location, None)

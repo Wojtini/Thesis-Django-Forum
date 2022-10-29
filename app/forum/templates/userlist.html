@@ -1,0 +1,9 @@
+{% extends "prerender.html" %}
+{% load datetime_extras %}
+{% block content %}
+    {% for user in users %}
+        <a href="/user/{{ user.identifier }}">
+        <img class="logo" src={{ user.identicon.url }}>{{ user }} : created: {{ user.created_at|timesince|timesince_filter }}  Entries: {{ user.entries_amount }}<br>
+        </a>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "prerender.html" %}
+{% load datetime_extras %}
+{% block content %}
+    {{ user }}
+    <section id="section_main">
+        {% for entry in user.entries %}
+            {% include "entry.html" with entry=entry %}
+        {% endfor %}
+    </section>
+{% endblock %}
