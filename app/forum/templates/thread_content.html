@@ -1,19 +1,34 @@
-{% extends "prerender.html" %}
+{% extends "base/prerender.html" %}
 {% block content %}
-    {% include "thread.html" with thread=thread %}
-    <div
-        hx-get="/forms/entryform/{{ thread.title }}"
-        hx-target="#div_form"
-        placeholder="Getting form..."
-    >GET FORM</div>
+    <center>{% include "components/thread.html" with thread=thread %}</center>
     
     <section id="section_main">
         {% for entry in thread.entries %}
-            {% include "entry.html" with entry=entry %}
+            {% include "components/entry.html" with entry=entry %}
         {% endfor %}
     </section>
 
+    <div class="container fixed-bottom bg-light" id="new_form_button">
+        <div
+            hx-get="/forms/entryform/{{ thread.title }}"
+            hx-target="#div_form"
+            placeholder="Getting form..."
+            onclick="toggle_new_form_button()"
+        >
+            GET FORM
+        </div>
+    </div>
+
     <script>
+        function toggle_new_form_button(){
+            let form = document.getElementById("new_form_button");
+            if (form.hasAttribute("hidden")){
+                form.removeAttribute("hidden")
+            }else{
+                form.setAttribute("hidden", "hidden")
+            }
+        }
+
         const form = document.getElementById("form");
 
         function add_reply(entry_id){

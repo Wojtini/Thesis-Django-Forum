@@ -18,7 +18,7 @@ class CategoryView(BaseView):
             self.prerender_template,
             context={
                 "category": category,
-                "threads": sorted(models.Thread.objects.filter(category=category, indexed=True), key=lambda t: t.update_date, reverse=True),
+                "threads": sorted(models.Thread.objects.filter(category=category), key=lambda t: t.update_date, reverse=True),
             },
         )
 
@@ -33,7 +33,6 @@ class CategoryView(BaseView):
                 creator=user,
                 description=form.cleaned_data.get("description"),
                 category=category,
-                indexed=True,
             )
             new_thread.save()
             return HttpResponseRedirect(request.path_info)

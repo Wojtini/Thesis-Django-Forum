@@ -10,7 +10,7 @@ class Index(BaseView):
     cache_location = INDEX_CACHE
 
     def _get_prerender_view(self, *args, **kwargs):
-        threads = sorted(models.Thread.objects.filter(indexed=True), key=lambda t: t.update_date, reverse=True)[0:3]
+        threads = sorted(models.Thread.objects.filter(), key=lambda t: t.update_date, reverse=True)[0:3]
         return loader.render_to_string(
             self.prerender_template,
             context={

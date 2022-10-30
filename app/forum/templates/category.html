@@ -1,13 +1,13 @@
-{% extends "prerender.html" %}
+{% extends "base/prerender.html" %}
 
 {% block before_content %}
-    {% include "category_panel.html" with category=category %}
+    {% include "components/category_panel.html" with category=category %}
 {% endblock %}
 
 {% block content %}
     {% for thread in threads %}
         <a href="/thread/{{ thread.title }}">
-            {% include "thread.html" with thread=thread extra="true" %}
+            {% include "components/thread.html" with thread=thread extra="true" %}
         </a>
     {% endfor %}
 {% endblock %}

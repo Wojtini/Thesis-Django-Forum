@@ -58,14 +58,18 @@ def user_verification(user_needed):
 def get_user(request) -> Optional[User]:
     if COOKIE_NAME_JWT in request.COOKIES:
         user_jwt = request.COOKIES[COOKIE_NAME_JWT]
-        try:
-            decoded = jwt.decode(user_jwt, SECRET_KEY, algorithms=["HS256"])
-            logger.info(f"User verified")
-            return User.objects.get(identifier=decoded.get("identifier"))
-        except InvalidSignatureError:
-            logger.info(f"User verification failed")
-            return None
+        return verify_user(user_jwt)
     return None
+
+
+def verify_user(user_jwt) -> Optional[User]:
+    try:
+        decoded = jwt.decode(user_jwt, SECRET_KEY, algorithms=["HS256"])
+        logger.info(f"User verified")
+        return User.objects.get(identifier=decoded.get("identifier"))
+    except InvalidSignatureError:
+        logger.info(f"User verification failed")
+        return None
 
 
 def create_user() -> UserJWT:

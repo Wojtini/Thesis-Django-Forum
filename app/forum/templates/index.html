@@ -1,8 +1,12 @@
-{% extends "prerender.html" %}
+{% extends "base/prerender.html" %}
 {% block content %}
-    {% for thread in threads %}
-        <a href="/thread/{{ thread.title }}">
-            {% include "thread.html" with thread=thread extra="true" %}
-        </a>
-    {% endfor %}
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                {% for thread in threads %}
+                    {% include "components/thread.html" with thread=thread extra="true" %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

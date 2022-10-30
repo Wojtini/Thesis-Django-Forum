@@ -6,6 +6,8 @@ WORKDIR /app
 COPY /app .
 COPY /app/start_prod.sh /
 
+RUN apt-get update
+RUN apt-get install -y cron
 RUN pip install pip-tools
 RUN pip-compile
 RUN pip install -r requirements.txt

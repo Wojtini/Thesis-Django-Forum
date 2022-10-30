@@ -53,7 +53,6 @@ class Thread(models.Model):
     description = models.TextField(null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    indexed = models.BooleanField(verbose_name="Is indexed")
 
     def __str__(self) -> str:
         return f"{self.title} by {str(self.creator)}"
@@ -80,8 +79,8 @@ class Thread(models.Model):
             for file in files_in_thread
             if file.is_image
         ]
-        if len(images_in_thread) > 0 and (last := images_in_thread.pop()):
-            return last
+        if len(images_in_thread) > 0:
+            return images_in_thread.pop()
         return None
 
 

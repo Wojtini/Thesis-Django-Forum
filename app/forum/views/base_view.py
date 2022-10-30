@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseView(View):
-    template_name = "base.html"
+    template_name = "base/base.html"
     prerender_template = None
     form_class = None
     cache_location = None

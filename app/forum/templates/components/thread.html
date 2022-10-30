@@ -1,0 +1,54 @@
+{% load datetime_extras %}
+
+
+{#<div class="container">#}
+{#    <div class="div1">#}
+{#        <img class="user_icon" src={{ thread.creator.identicon.url }}>#}
+{#    </div>#}
+{#    <div class="div2">#}
+{#        <div class="container_creator">#}
+{#            created by: {{ thread.creator }} {{ thread.created_date|timesince|timesince_filter }}#}
+{#        </div>#}
+{#        <div class="container_header">#}
+{#            <b>{{ thread.title }}</b>#}
+{#        </div>#}
+{#        <div class="container_content">#}
+{#            {{ thread.description }}#}
+{#        </div>#}
+{#        {% if extra %}#}
+{#            <div class="container_image">#}
+{#                <img id="{{ thread.id }}_original" src="{{ thread.last_image.compressed_file.url }}">#}
+{#            </div>#}
+{#            <div class="container_footer">#}
+{#                💬 {{ thread.total_number_of_entries }} comments#}
+{#                Last update: {{ thread.update_date|timesince|timesince_filter }}#}
+{#            </div>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#</div>#}
+
+
+
+<div class="col-md-4">
+    <a href="/thread/{{ thread.title }}" class="text-decoration-none text-muted">
+    <div class="card mb-5 shadow-sm">
+        <img class="card-img-top" src="{{ thread.last_image.compressed_file.url }}" alt="Card image cap">
+        <div class="card-body">
+
+            <small class="text-muted">
+                <img class="user_icon" height="50px" src={{ thread.creator.identicon.url }}>
+                {{ thread.creator }}
+            </small>
+            <h3>{{ thread.title }}</h3>
+            <p class="card-text">{{ thread.description }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    💬 {{ thread.total_number_of_entries }} comments <br>
+                    Created: {{ thread.created_date|timesince|timesince_filter }} <br>
+                    Last update: {{ thread.update_date|timesince|timesince_filter }}
+                </small>
+            </div>
+        </div>
+    </div>
+    </a>
+</div>

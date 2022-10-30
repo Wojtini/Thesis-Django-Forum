@@ -21,7 +21,7 @@ class EntryFormView(View):
     def get(self, request, *args, **kwargs):
         return render(
             request,
-            "form.html",
+            "components/form.html",
             context={
                 "form": self.form_class,
                 "endpoint": f"entryform/{kwargs.get('thread_name')}",
@@ -73,7 +73,7 @@ class EntryFormView(View):
             str(entry.thread_id),
             {
                 "type": "update_thread",
-                "content": loader.render_to_string("entry.html", {"entry": entry}),
+                "content": loader.render_to_string("components/entry.html", {"entry": entry}),
             },
         )
 

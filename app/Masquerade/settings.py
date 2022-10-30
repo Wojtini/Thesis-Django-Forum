@@ -153,6 +153,13 @@ THREAD_CACHE = "thread_cache"
 COOKIE_NAME_JWT = "identificator"
 COOKIE_LIFETIME = 365*24*60*60
 
+# CRONJOBS
+
+CRONJOBS = [
+    ('*/1 * * * *', 'forum.cron.my_scheduled_job', '>> /app/app/scheduled_job.log')
+]
+
+
 # IDENTICON
 
 IDENTICON_FOREGROUNDS = [

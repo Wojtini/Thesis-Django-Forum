@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masquerade</title>
+    {% include "components/../base/css.html" %}
+</head>
+<body>
+    {% include "components/navbar.html" %}
+
+    {{ prerender }}
+
+
+    <div class="container fixed-bottom bg-light" id="div_form">
+    {% if form %}
+        <form method="post" enctype="multipart/form-data" class="form-group">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+    </div>
+</body>
+</html>
