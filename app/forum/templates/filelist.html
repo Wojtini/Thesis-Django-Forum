@@ -1,0 +1,7 @@
+{% extends "base/prerender.html" %}
+{% load datetime_extras %}
+{% block content %}
+    {% for file in files %}
+        <a target="_blank" href="{{ file.original_file.url }}">{{ file.original_file }}: {{ file.original_file.size|sizify }}</a><br>
+    {% endfor %}
+{% endblock %}

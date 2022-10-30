@@ -13,4 +13,4 @@ class EntryModelTests(TestCase):
         self.entry.save()
 
     def test_get_entries(self):
-        self.assertEqual(self.thread.entries, 1)
+        self.assertEqual(self.thread.total_number_of_entries, 1)

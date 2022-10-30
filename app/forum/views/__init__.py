@@ -3,3 +3,8 @@ from forum.views.index import Index
 from forum.views.gallery import GalleryView
 from forum.views.thread import ThreadView
 from forum.views.category import CategoryView
+from forum.views.account_creation import AccountCreation
+from forum.views.file_list import FileListView
+from forum.views.user_list import UserListView
+from forum.views.user_entries import UserEntriesView
+from forum.views.form_views.entry_form import EntryFormView

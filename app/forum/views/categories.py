@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.views import View
+from django.template import loader
 
 from forum.forms import CategoryForm
 from forum.models import Category
@@ -11,15 +10,13 @@ class CategoryListView(BaseView):
     prerender_template = "categories_list.html"
     form_class = CategoryForm
 
-    @user_verification(user_needed=False)
-    def get(self, request, *args, **kwargs):
-        user = kwargs.get("user")
-        prerender = self._get_prerender_view(
+    def _get_prerender_view(self, *args, **kwargs):
+        return loader.render_to_string(
+            self.prerender_template,
             context={
-                "categories": Category.all_non_empty,
+                "categories": Category.objects.all(),
             }
         )
-        return self._get_rendered_view(request, user, prerender)
 
     @user_verification(user_needed=True)
     def post(self, request, *args, **kwargs):
@@ -31,9 +28,5 @@ class CategoryListView(BaseView):
                 creator=user,
             )
             new_category.save()
-        prerender = self._get_prerender_view(
-            context={
-                "categories": Category.all_non_empty,
-            }
-        )
+        prerender = self._get_prerender_view(*args, **kwargs)
         return self._get_rendered_view(request, user, prerender)

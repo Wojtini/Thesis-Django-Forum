@@ -3,12 +3,12 @@ import os
 import uuid
 from dataclasses import dataclass
 from typing import Optional
-
+import jwt
 import pydenticon
-from django.contrib.auth.hashers import make_password, check_password
+from jwt import InvalidSignatureError
 
-from Masquerade.settings import COOKIE_PASS, COOKIE_USER, COOKIE_LIFETIME, MEDIA_ROOT, identicon_size, \
-    identicon_padding, identicon_background, identicon_foregrounds
+from Masquerade.settings import COOKIE_NAME_JWT, COOKIE_LIFETIME, MEDIA_ROOT, IDENTICON_SIZE, \
+    IDENTICON_PADDING, IDENTICON_BACKGROUND, IDENTICON_FOREGROUNDS, SECRET_KEY
 from forum.models import User
 
 
@@ -22,9 +22,9 @@ class Cookie:
 
 
 @dataclass
-class UserPassword:
+class UserJWT:
     model: User
-    password: str
+    encoded_jwt: str
 
 
 def user_verification(user_needed):
@@ -39,8 +39,7 @@ def user_verification(user_needed):
                     {
                         "user": new_user.model,
                         "cookies_to_set": [
-                            Cookie(COOKIE_USER, new_user.model.identifier),
-                            Cookie(COOKIE_PASS, new_user.password),
+                            Cookie(COOKIE_NAME_JWT, new_user.encoded_jwt),
                         ]
                     }
                 )
@@ -57,55 +56,47 @@ def user_verification(user_needed):
 
 
 def get_user(request) -> Optional[User]:
-    if COOKIE_USER in request.COOKIES and COOKIE_PASS in request.COOKIES:
-        password = request.COOKIES[COOKIE_PASS]
-        user_id = request.COOKIES[COOKIE_USER]
-        logger.info(f"{user_id}: Verifying user")
-        if user := verify_user(user_id, password):
-            logger.info(f"{user}: User verified")
-            return user
-        logger.info(f"{user_id}: User verification failed")
+    if COOKIE_NAME_JWT in request.COOKIES:
+        user_jwt = request.COOKIES[COOKIE_NAME_JWT]
+        return verify_user(user_jwt)
     return None
 
 
-def create_user() -> UserPassword:
-    password = str(uuid.uuid4())
+def verify_user(user_jwt) -> Optional[User]:
+    try:
+        decoded = jwt.decode(user_jwt, SECRET_KEY, algorithms=["HS256"])
+        logger.info(f"User verified")
+        return User.objects.get(identifier=decoded.get("identifier"))
+    except InvalidSignatureError:
+        logger.info(f"User verification failed")
+        return None
+
+
+def create_user() -> UserJWT:
     new_user = User()
-    hashed_password = make_password(
-        password=password,
-        salt=str(uuid.uuid4()),
-        hasher="default",
-    )
-    new_user.password = hashed_password
     new_user.identicon = create_identicon(new_user.identifier)
     new_user.save()
-    return UserPassword(model=new_user, password=password)
+    payload = {
+        "identifier": str(new_user.identifier)
+    }
+    encoded = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+    return UserJWT(model=new_user, encoded_jwt=encoded)
 
 
 def create_identicon(username: uuid.UUID) -> str:
     username = str(username)
     username = "".join(username.split("-"))
     logger.info(f"Creating new identicon for {username}")
-    size_x, size_y = identicon_size
+    size_x, size_y = IDENTICON_SIZE
     generator = pydenticon.Generator(
         size_x,
         size_y,
-        foreground=identicon_foregrounds,
-        background=identicon_background,
+        foreground=IDENTICON_FOREGROUNDS,
+        background=IDENTICON_BACKGROUND,
     )
-    identicon = generator.generate(username, 200, 200, output_format="png", padding=identicon_padding)
+    identicon = generator.generate(username, 200, 200, output_format="png", padding=IDENTICON_PADDING)
     filepath = os.path.join(MEDIA_ROOT, f"{username}.png")
     with open(filepath, "wb") as file:
         file.write(identicon)
     logger.info(f"Created new identicon at {filepath}")
     return f"{username}.png"
-
-
-def verify_user(user_id: str, password: str) -> Optional[User]:
-    try:
-        user = User.objects.get(identifier=user_id)
-        if check_password(password, user.password):
-            return user
-    except User.DoesNotExist:
-        pass
-    return None

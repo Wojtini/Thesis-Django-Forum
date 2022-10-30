@@ -1,0 +1,49 @@
+{% load datetime_extras %}
+{% load static %}
+
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum:home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum:categories' %}">Categories</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum:gallery' %}">Gallery</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum:filelist' %}">File List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum:userlist' %}">User List</a>
+            </li>
+        </ul>
+    </div>
+    <div class="mx-auto order-0">
+        <a class="navbar-brand mx-auto" href="#">Masquerade</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="navbar-brand mx-auto" href="#"><img class="logo" width="50px" height="50px" src={{ user.identicon.url }}></a>
+            </li>
+            <li class="nav-item">
+                {% if user %}
+                    <a class="nav-link">
+                        user_id: {{ user.identifier }} <br>
+                        created {{ user.created_at|timesince|timesince_filter }}
+                    </a>
+
+                {% else %}
+                    <a href="{% url 'forum:new_account' %}">Create new account</a>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+</nav>

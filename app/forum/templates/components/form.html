@@ -1,0 +1,26 @@
+<form
+    id='form'
+    hx-encoding='multipart/form-data'
+    hx-post='/forms/{{ endpoint }}'
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+>
+    <div onclick="delete_form()">
+        close
+    </div>
+    {{ form }}
+    <button>
+    Upload
+    </button>
+    <progress id='progress' value='0' max='100'></progress>
+</form>
+<script>
+    function delete_form(){
+        let form_to_delete = document.getElementById("form");
+        form_to_delete.remove()
+        toggle_new_form_button()
+    }
+
+    htmx.on('#form', 'htmx:xhr:progress', function(evt) {
+      htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+    });
+</script>
