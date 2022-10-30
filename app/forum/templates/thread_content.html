@@ -1,7 +1,12 @@
 {% extends "prerender.html" %}
 {% block content %}
     {% include "thread.html" with thread=thread %}
-
+    <div
+        hx-get="/forms/entryform/{{ thread.title }}"
+        hx-target="#div_form"
+        placeholder="Getting form..."
+    >GET FORM</div>
+    
     <section id="section_main">
         {% for entry in thread.entries %}
             {% include "entry.html" with entry=entry %}

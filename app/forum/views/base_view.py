@@ -2,7 +2,6 @@ import logging
 
 from django.core.cache import cache
 from django.shortcuts import render
-from django.template import loader
 from django.views import View
 
 from Masquerade.settings import DISABLE_CACHE

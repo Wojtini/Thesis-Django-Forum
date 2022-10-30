@@ -9,19 +9,17 @@
 <body>
     {% include "navbar.html" %}
 
-
     {{ prerender }}
 
+    <div class="formdiv" id="div_form">
     {% if form %}
-        <div class="formdiv" id="form">
-            {{ form_message }}
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form }}
                 <input type="submit" value="Submit">
             </form>
-        </div>
     {% endif %}
+    </div>
 
 </body>
 </html>

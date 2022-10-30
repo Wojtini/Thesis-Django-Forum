@@ -33,7 +33,6 @@ class CategoryView(BaseView):
                 creator=user,
                 description=form.cleaned_data.get("description"),
                 category=category,
-                # indexed=form.cleaned_data.get("indexed"),
                 indexed=True,
             )
             new_thread.save()
