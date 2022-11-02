@@ -37,7 +37,6 @@ class EntryFormView(View):
             files = request.FILES.getlist("files")
             entry = self._create_new_entry(user, thread, form, files)
             self._update_connected_clients(entry)
-            print("NICE")
         print(form.errors)
         return self.get(request, *args, **kwargs)
 
@@ -46,17 +45,16 @@ class EntryFormView(View):
             creator=user,
             thread=thread,
             content=str(form.cleaned_data["content"]),
-            replied_to=None,
         )
         new_entry.save()
         for file in files:
-            new_file = EntryFormView._create_new_file(file)
-            new_entry.attached_files.add(new_file)
+            EntryFormView._create_new_file(file, new_entry)
         return new_entry
 
     @staticmethod
-    def _create_new_file(file) -> EntryFile:
+    def _create_new_file(file, new_entry) -> EntryFile:
         new_file = EntryFile(
+            entry=new_entry,
             original_file=file,
         )
         new_file.save()

@@ -1,9 +1,21 @@
 {% extends "base/prerender.html" %}
 {% load datetime_extras %}
 {% block content %}
-    {% for user in users %}
-        <a href="/user/{{ user.identifier }}">
-        <img class="logo" src={{ user.identicon.url }}>{{ user }} : created: {{ user.created_at|timesince|timesince_filter }}  Entries: {{ user.entries_amount }}<br>
-        </a>
-    {% endfor %}
+    <div class="container">
+    <table class="table" class="table table-hover table-responsive">
+      <thead>
+        <tr>
+          <th scope="col">identicon</th>
+          <th scope="col">display_name</th>
+          <th scope="col">identifier</th>
+          <th scope="col"># of entries</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+            {% include "components/user_entry.html" with user=user %}
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
 {% endblock %}

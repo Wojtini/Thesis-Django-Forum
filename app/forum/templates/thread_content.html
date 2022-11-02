@@ -1,6 +1,8 @@
 {% extends "base/prerender.html" %}
 {% block content %}
-    <center>{% include "components/thread.html" with thread=thread %}</center>
+    <div class="container col-sm-12 col-lg-6">
+        {% include "components/thread.html" with thread=thread %}
+    </div>
     
     <section id="section_main">
         {% for entry in thread.entries %}

@@ -1,7 +1,20 @@
 {% extends "base/prerender.html" %}
-{% load datetime_extras %}
 {% block content %}
-    {% for file in files %}
-        <a target="_blank" href="{{ file.original_file.url }}">{{ file.original_file }}: {{ file.original_file.size|sizify }}</a><br>
-    {% endfor %}
+    <div class="container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">size</th>
+          <th scope="col">origin_link</th>
+          <th scope="col">file</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+            {% include "components/file_entry.html" with file=file %}
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
 {% endblock %}

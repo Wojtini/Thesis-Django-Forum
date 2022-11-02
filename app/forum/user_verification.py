@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Optional
 import jwt
 import pydenticon
+from django.core.exceptions import ObjectDoesNotExist
 from jwt import InvalidSignatureError
 
 from Masquerade.settings import COOKIE_NAME_JWT, COOKIE_LIFETIME, MEDIA_ROOT, IDENTICON_SIZE, \
@@ -58,7 +59,10 @@ def user_verification(user_needed):
 def get_user(request) -> Optional[User]:
     if COOKIE_NAME_JWT in request.COOKIES:
         user_jwt = request.COOKIES[COOKIE_NAME_JWT]
-        return verify_user(user_jwt)
+        try:
+            return verify_user(user_jwt)
+        except ObjectDoesNotExist:
+            pass
     return None
 
 

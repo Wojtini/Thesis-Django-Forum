@@ -1,13 +1,37 @@
 {% extends "base/prerender.html" %}
 
-{% block before_content %}
-    {% include "components/category_panel.html" with category=category %}
-{% endblock %}
 
 {% block content %}
-    {% for thread in threads %}
-        <a href="/thread/{{ thread.title }}">
-            {% include "components/thread.html" with thread=thread extra="true" %}
-        </a>
-    {% endfor %}
+    <div class="container">
+        {% include "components/category_panel.html" with category=category %}
+        <div
+            hx-get="/forms/threadform/{{ category.name }}"
+            hx-target="#div_form"
+            placeholder="Getting form..."
+            onclick="toggle_new_form_button()"
+        >
+            Create new thread
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="card-columns" id="thread_list">
+            {% for thread in threads %}
+                {% include "components/thread.html" with thread=thread %}
+            {% endfor %}
+        </div>
+    </div>
+
+
+{#    <div class="album py-5 bg-light">#}
+{#        <div class="container">#}
+{#            <div class="row" id="thread_list">#}
+{#                {% for thread in threads %}#}
+{#                    {% include "components/thread.html" with thread=thread %}#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
 {% endblock %}

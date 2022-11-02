@@ -3,11 +3,9 @@
 cd app || exit
 rm /app/staticfiles -r
 python manage.py collectstatic
-python manage.py compress --force
+#python manage.py compress --force
 
-python manage.py crontab add
-python manage.py crontab show
-service cron start
+./start_cron.sh
 
 gunicorn --bind 0.0.0.0:8000 --workers=6 Masquerade.wsgi &
 P1=$!

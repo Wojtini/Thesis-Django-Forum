@@ -1,11 +1,14 @@
 from captcha.fields import CaptchaField
 from django import forms
 
-from forum.models import Category
+
+class DisplayNameForm(forms.Form):
+    display_name = forms.CharField(label="display name", max_length=20)
 
 
 class BaseForm(forms.Form):
-    captcha = CaptchaField()
+    # captcha = CaptchaField()
+    pass
 
 
 class EntryForm(BaseForm):

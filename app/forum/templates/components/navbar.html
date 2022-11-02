@@ -2,7 +2,7 @@
 {% load static %}
 
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
@@ -31,17 +31,30 @@
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="navbar-brand mx-auto" href="#"><img class="logo" width="50px" height="50px" src={{ user.identicon.url }}></a>
+                {% if user %}
+                    <a class="navbar-brand mx-auto" href="#"><img class="logo" width="50px" height="50px" src={{ user.identicon.url }}></a>
+                {% endif %}
             </li>
             <li class="nav-item">
                 {% if user %}
                     <a class="nav-link">
+                        <div class="container fixed-bottom" id="new_form_button">
+                            {% if user.display_name %}
+                                {{ user.display_name }}
+                            {% else %}
+                                <div
+                                    hx-get="/forms/displaynameform"
+                                    hx-target="#div_form"
+                                    placeholder="Getting form..."
+                                    onclick="toggle_new_form_button()"
+                                >
+                                    Set display name
+                                </div>
+                            {% endif %}
+                        </div>
                         user_id: {{ user.identifier }} <br>
                         created {{ user.created_at|timesince|timesince_filter }}
                     </a>
-
-                {% else %}
-                    <a href="{% url 'forum:new_account' %}">Create new account</a>
                 {% endif %}
             </li>
         </ul>

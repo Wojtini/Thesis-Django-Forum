@@ -1,10 +1,14 @@
 {% extends "base/prerender.html" %}
 {% block content %}
-    <div class="images">
-        {% for image in images %}
-            <div class="image" id={{ image.id }}>
-                <a href="{{ image.original_file.url }}" target="_blank"><img id="{{ image.id }}_compressed" loading="lazy" src="{{ image.compressed_file.url }}"></a>
-            </div>
-        {% endfor %}
+    <div class="container">
+        <div class="card-columns">
+            {% for image in images %}
+                <div class="image" id={{ image.id }}>
+                    <a href="{{ image.original_file.url }}" target="_blank">
+                        {% include "components/gallery_card.html" with image=image %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

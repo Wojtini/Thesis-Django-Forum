@@ -1,16 +1,16 @@
-import os
 import re
 import uuid
-from typing import Optional, Iterable
+from typing import Optional
 
 from django.db import models
 from django.db.models import QuerySet
 
-from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS
+from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS, SAFE_CYCLES
 
 
 class User(models.Model):
     identifier = models.UUIDField(default=uuid.uuid4, null=False, primary_key=True, editable=False)
+    display_name = models.CharField(null=True, default=None, editable=False, max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
     identicon = models.ImageField(null=False)
 
@@ -22,7 +22,25 @@ class User(models.Model):
     def entries_amount(self) -> int:
         return len(self.entries)
 
+    @property
+    def threads(self) -> QuerySet:
+        return Thread.objects.filter(creator=self)
+
+    @property
+    def threads_amount(self) -> int:
+        return len(self.threads)
+
+    @property
+    def categories(self) -> QuerySet:
+        return Category.objects.filter(creator=self)
+
+    @property
+    def categories_amount(self) -> int:
+        return len(self.categories)
+
     def __str__(self) -> str:
+        if self.display_name:
+            return f"{self.display_name} : {self.identifier}"
         return f"{self.identifier}"
 
 
@@ -53,6 +71,7 @@ class Thread(models.Model):
     description = models.TextField(null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
+    cycle = models.IntegerField(default=-SAFE_CYCLES-1)
 
     def __str__(self) -> str:
         return f"{self.title} by {str(self.creator)}"
@@ -83,8 +102,13 @@ class Thread(models.Model):
             return images_in_thread.pop()
         return None
 
+    @property
+    def get_link(self):
+        return f"/thread/{self.title}"
+
 
 class EntryFile(models.Model):
+    entry = models.ForeignKey('Entry', on_delete=models.CASCADE)
     original_file = models.FileField(null=True)
     compressed_file = models.FileField(null=True)
 
@@ -105,17 +129,24 @@ class EntryFile(models.Model):
             for extension in DISPLAYABLE_VIDEOS
         )
 
+    @property
+    def thread_link(self):
+        return self.entry.thread.get_link + f"#{self.entry.id}"
+
 
 class Entry(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     content = models.TextField()
-    attached_files = models.ManyToManyField(EntryFile)
-    replied_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
+    calculated_popularity = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.thread}: {self.content}"
+
+    @property
+    def attached_files(self):
+        return EntryFile.objects.filter(entry=self)
 
     @property
     def with_links(self):
@@ -130,6 +161,16 @@ class Entry(models.Model):
         return result
 
 
+class Cycle(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+
+
+class CycleThread(models.Model):
+    cycle = models.ForeignKey(Cycle, on_delete=models.CASCADE)
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+    popularity = models.FloatField()
+
+
 all_models = [
-    User, Entry, Thread, Category, EntryFile
+    User, Entry, Thread, Category, EntryFile, Cycle, CycleThread
 ]

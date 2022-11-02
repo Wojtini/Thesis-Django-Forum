@@ -20,7 +20,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "forum.apps.ForumConfig",
-    "django_crontab",
     "channels",
     "captcha",
     "compressor",
@@ -155,10 +154,8 @@ COOKIE_LIFETIME = 365*24*60*60
 
 # CRONJOBS
 
-CRONJOBS = [
-    ('*/1 * * * *', 'forum.cron.my_scheduled_job', '>> /app/app/scheduled_job.log')
-]
-
+SAFE_CYCLES = 5
+MINIMUM_POPULARITY = 2
 
 # IDENTICON
 
@@ -176,5 +173,6 @@ IDENTICON_PADDING = (10, 10, 10, 10)
 IDENTICON_SIZE = (10, 10)
 
 # DISPLAYABLE MEDIA
-DISPLAYABLE_IMAGES = [".png", ".jpg", ".gif", ".webp"]
+DISPLAYABLE_IMAGES = [".png", ".jpg", ".jpeg", ".gif", ".webp"]
 DISPLAYABLE_VIDEOS = [".mp4"]
+

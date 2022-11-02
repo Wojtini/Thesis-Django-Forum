@@ -1,21 +1,15 @@
 {% load datetime_extras %}
 
 
-<div class="category_panel">
-    <div class="div1">
+<a href="/category/{{ category.name }}">
+    <div class="media text-muted pt-3 border-bottom">
+{#        <img src="{{ category.creator.identicon.url }}" alt="">#}
+        <p class="media-body pb-3 mb-0 small lh-125 border-gray">
+            <strong class="d-block text-gray-dark">
+                {{ category.name }}
+            </strong>
+            {{ category.description }}
+        </p>
+        {{ category.number_of_active_threads }} active threads
     </div>
-    <div class="div2">
-        <div class="container_creator">
-            created by: {{ category.creator }}
-        </div>
-        <div class="container_header">
-            <b>About {{ category.name }} category</b>
-        </div>
-        <div class="container_content">
-            <pre>{{ category.description }}</pre>
-        </div>
-        <div class="container_footer">
-            {{ category.number_of_active_threads }}
-        </div>
-    </div>
-</div>
+</a>

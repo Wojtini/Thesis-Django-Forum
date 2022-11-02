@@ -1,0 +1,15 @@
+{% load datetime_extras %}
+<tr>
+    <th scope="row">{{ file.id }}</th>
+    <td>{{ file.original_file.size|sizify }}</td>
+    <td>
+        <a href="{{ file.thread_link }}" target="_blank">
+            Original thread
+        </a>
+    </td>
+    <td>
+        <a target="_blank" href="{{ file.original_file.url }}">
+            {{ file.original_file }}
+        </a>
+    </td>
+</tr>

@@ -1,0 +1,13 @@
+{% load datetime_extras %}
+<tr>
+    <td><img class="logo" style="height: 50px" src={{ user.identicon.url }}></td>
+    <td>{{ user.display_name }}</td>
+    <td>
+        <a href="/user/{{ user.identifier }}">
+            {{ user.identifier }}
+        </a>
+    </td>
+    <td>
+        {{ user.entries_amount }}
+    </td>
+</tr>
