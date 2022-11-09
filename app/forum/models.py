@@ -48,6 +48,7 @@ class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     description = models.TextField(null=False, max_length=300)
+    created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"{self.name}"

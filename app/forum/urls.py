@@ -1,7 +1,7 @@
 from django.urls import path
 
 from forum.views import Index, ThreadView, CategoryListView, CategoryView, GalleryView, AccountCreation, FileListView, \
-    UserListView, UserEntriesView, EntryFormView, DisplayNameFormView, CategoryFormView, ThreadFormView
+    UserListView, UserEntriesView, EntryFormView, DisplayNameFormView, CategoryFormView, ThreadFormView, GraphView
 
 app_name = "forum"
 
@@ -12,6 +12,7 @@ urlpatterns = [
     path("filelist/", FileListView.as_view(), name="filelist"),
     path("users/", UserListView.as_view(), name="userlist"),
     path("user/<str:user_id>", UserEntriesView.as_view(), name="user_id"),
+    path("graph/", GraphView.as_view(), name="user_id"),
     path("thread/<str:thread_name>", ThreadView.as_view(), name="thread"),
     path("category/<str:category_name>", CategoryView.as_view(), name="category"),
     path("new_account", AccountCreation.as_view(), name="new_account"),

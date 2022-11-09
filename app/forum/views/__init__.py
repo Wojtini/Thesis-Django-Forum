@@ -11,3 +11,4 @@ from forum.views.form_views.entry_form import EntryFormView
 from forum.views.form_views.display_name_form import DisplayNameFormView
 from forum.views.form_views.category_form import CategoryFormView
 from forum.views.form_views.thread_form import ThreadFormView
+from forum.views.graph import GraphView

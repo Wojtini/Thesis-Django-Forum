@@ -1,0 +1,34 @@
+{% extends "base/prerender.html" %}
+{% block content %}
+    <div class="container">
+        <canvas id="lineChart"></canvas>
+    </div>
+
+    <script>
+    var ctxL = document.getElementById("lineChart").getContext('2d');
+    var myLineChart = new Chart(ctxL, {
+        type: 'line',
+        data: {
+            labels: {{ x_values|safe }},
+            datasets: [
+            {% for entry, values in data.items %}
+                {
+                    label: "{{ entry.title }}",
+                    data: {{ values.y|safe }},
+                    backgroundColor: [
+                        'RGBA( 0, 0, 255, 0 )'
+                    ],
+                    borderColor: [
+                        '{{ values.color|safe }}',
+                    ],
+                    borderWidth: 2
+                },
+            {% endfor %}
+            ]
+        },
+        options: {
+            responsive: true
+        }
+    });
+    </script>
+{% endblock %}
