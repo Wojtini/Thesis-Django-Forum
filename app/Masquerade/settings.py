@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -146,7 +147,6 @@ FILE_LIST_CACHE = "file_list_cache"
 USER_LIST_CACHE = "user_list_cache"
 INDEX_CACHE = "index_cache"
 THREAD_CACHE = "thread_cache"
-
 # COOKIES NAMES
 
 COOKIE_NAME_JWT = "identificator"
@@ -156,6 +156,11 @@ COOKIE_LIFETIME = 365*24*60*60
 
 SAFE_CYCLES = 5
 MINIMUM_POPULARITY = 2
+
+MAX_FILESIZE_PER_THREAD_MB = 200
+MINIMUM_ALPHA_COEFFICENT = 0.1
+MAXIMUM_ALPHA_COEFFICENT = 0.9
+
 
 # IDENTICON
 

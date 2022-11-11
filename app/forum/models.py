@@ -107,6 +107,22 @@ class Thread(models.Model):
     def get_link(self):
         return f"/thread/{self.title}"
 
+    @property
+    def all_files_size_b(self) -> int:
+        files_in_thread = EntryFile.objects.filter(entry__thread=self)
+        return sum(
+            file.original_file.size + (file.compressed_file.size if file.compressed_file else 0)
+            for file in files_in_thread
+        )
+
+    @property
+    def all_files_size_kb(self) -> float:
+        return self.all_files_size_b / 1024
+
+    @property
+    def all_files_size_mb(self) -> float:
+        return self.all_files_size_kb / 1024
+
 
 class EntryFile(models.Model):
     entry = models.ForeignKey('Entry', on_delete=models.CASCADE)
