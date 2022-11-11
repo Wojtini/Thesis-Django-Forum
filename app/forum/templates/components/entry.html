@@ -2,7 +2,7 @@
 {% load datetime_extras %}
 
 <div class="container">
-<a class="anchor" ></a>
+<a class="anchor" id="{{ entry.id }}_jump_location">
 <div class="card mb-2 entry" id="{{ entry.id }}">
     <div class="card-body p-2 p-sm-3">
         <div class="media forum-item">
@@ -12,7 +12,7 @@
             <div class="media-body">
                 <h6>
                     <a href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
-                        {{ entry.creator }}
+                        #{{ entry.id }}:{{ entry.creator }}
                     </a>
                 </h6>
                 <p class="text-secondary">
@@ -20,9 +20,10 @@
                         {% if part.safe %}
                             {{ part.value|safe }}
                         {% else %}
-                            <pre>{{ part.value }}</pre>
+                            {{ part.value }}
                         {% endif %}
                     {% endfor %}
+                    <br>
                     {% for file in entry.attached_files.all %}
                         {% include "components/displayable_file.html" with file=file %}
                     {% endfor %}
@@ -32,9 +33,9 @@
                         {{ entry.creation_date|timesince|timesince_filter }}
                     </span>
                 </p>
+{#                <button type="button" class="btn btn-info" onclick="add_reply({{ entry.id }})">Reply</button>#}
             </div>
-
         </div>
     </div>
-</div>
+</div></a>
 </div>

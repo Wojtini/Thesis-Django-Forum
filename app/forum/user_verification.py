@@ -49,7 +49,7 @@ def user_verification(user_needed):
             response = func(*args, **kwargs)
 
             for cookie in kwargs.get("cookies_to_set", []):
-                response.set_cookie(cookie.key, cookie.value, COOKIE_LIFETIME)
+                response.set_cookie(cookie.key, cookie.value, COOKIE_LIFETIME, httponly=True)
 
             return response
         return inner

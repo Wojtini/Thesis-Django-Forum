@@ -2,8 +2,11 @@ import re
 import uuid
 from typing import Optional
 
+from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db import models
 from django.db.models import QuerySet
+from django.utils.safestring import mark_safe
 
 from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS, SAFE_CYCLES
 
@@ -93,7 +96,7 @@ class Thread(models.Model):
 
     @property
     def last_image(self) -> Optional["EntryFile"]:
-        files_in_thread = EntryFile.objects.filter(entry__thread=self)
+        files_in_thread = EntryFile.objects.filter(entry__thread=self).order_by("entry__creation_date")
         images_in_thread = [
             file
             for file in files_in_thread
@@ -121,7 +124,7 @@ class Thread(models.Model):
 
     @property
     def all_files_size_mb(self) -> float:
-        return self.all_files_size_kb / 1024
+        return round(self.all_files_size_kb / 1024, 2)
 
 
 class EntryFile(models.Model):
@@ -130,7 +133,7 @@ class EntryFile(models.Model):
     compressed_file = models.FileField(null=True)
 
     def __str__(self):
-        return self.original_file.name
+        return f"{self.original_file.name}"
 
     @property
     def is_image(self):
@@ -170,7 +173,7 @@ class Entry(models.Model):
         splitted = re.split(r"(#[0-9]+)", self.content)
         result = [
             {
-                "value": part if not re.search(r"(#[0-9]+)", part) else f"<a href='{part}'>{part}</a>",
+                "value": part if not re.search(r"(#[0-9]+)", part) else f"<a href='{part}_jump_location'>{part}</a>",
                 "safe": re.search(r"(#[0-9]+)", part),
             }
             for part in splitted
@@ -180,6 +183,9 @@ class Entry(models.Model):
 
 class Cycle(models.Model):
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.id} at {self.date}"
 
 
 class CycleThread(models.Model):
@@ -191,3 +197,75 @@ class CycleThread(models.Model):
 all_models = [
     User, Entry, Thread, Category, EntryFile, Cycle, CycleThread
 ]
+
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('identifier', 'display_name', 'created_at')
+    readonly_fields = ('identifier', 'display_name', 'created_at', 'identicon_image')
+
+    def identicon_image(self, obj):
+        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+                url=obj.identicon.url,
+                width=obj.identicon.width,
+                height=obj.identicon.height,
+            )
+        )
+
+    identicon_image.allow_tags = True
+
+
+class EntryInstanceInline(admin.TabularInline):
+    model = Entry
+
+
+class EntryFileInstanceInline(admin.TabularInline):
+    model = EntryFile
+
+
+class EntryAdmin(admin.ModelAdmin):
+    list_display = ('creator', 'thread', 'creation_date', 'calculated_popularity', 'attachments')
+    inlines = [EntryFileInstanceInline]
+
+    def attachments(self, obj):
+        return [
+            file
+            for file in obj.attached_files
+        ]
+
+
+class ThreadAdmin(admin.ModelAdmin):
+    list_display = ('title', 'total_number_of_entries', 'created_date', 'all_files_size_mb')
+
+    inlines = [EntryInstanceInline]
+
+
+class EntryFileAdmin(admin.ModelAdmin):
+    list_display = ('size', 'as_link', 'as_image')
+    readonly_fields = ('size', 'as_link', 'as_image')
+
+    def as_link(self, obj):
+        return mark_safe('<a href="{url}"/>{filename}</a>'.format(
+                url=obj.original_file.url,
+                filename=obj.original_file,
+            )
+        )
+
+    def size(self, obj: EntryFile):
+        return f'{obj.original_file.size}B'
+
+    def as_image(self, obj):
+        return mark_safe('<img src="{url}"/>'.format(
+                url=obj.compressed_file.url,
+            )
+        )
+
+    as_link.allow_tags = True
+    as_image.allow_tags = True
+
+    # inlines = [ReverseEntryInstanceInline]
+
+
+admin.site.register(User, UserAdmin)
+admin.site.register(Thread, ThreadAdmin)
+admin.site.register(Entry, EntryAdmin)
+admin.site.register(EntryFile, EntryFileAdmin)

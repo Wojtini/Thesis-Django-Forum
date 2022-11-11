@@ -33,5 +33,4 @@ class CategoryFormView(View):
             )
             new_category.save()
             return render(request, "components/category_panel.html", context={"category": new_category})
-        print(form.errors)
         return HttpResponse(204)
