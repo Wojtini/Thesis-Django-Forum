@@ -2,7 +2,6 @@
 {% block content %}
     <div class="container col-sm-12 col-lg-6">
         {% include "components/thread.html" with thread=thread %}
-        {% include "components/graph.html" %}
     </div>
     
     <section id="section_main">
@@ -12,27 +11,26 @@
     </section>
 
     <div class="container fixed-bottom bg-light" id="new_form_button">
-        <div
+        <button
+            class="btn-lg w-100 h-100 btn-success"
             hx-get="/forms/entryform/{{ thread.title }}"
             hx-target="#div_form"
             placeholder="Getting form..."
             onclick="toggle_new_form_button()"
         >
-            GET FORM
-        </div>
+            Add comment
+        </button>
     </div>
 
     <script>
         function toggle_new_form_button(){
-            let form = document.getElementById("new_form_button");
-            if (form.hasAttribute("hidden")){
-                form.removeAttribute("hidden")
+            let f = document.getElementById("new_form_button");
+            if (f.hasAttribute("hidden")){
+                f.removeAttribute("hidden")
             }else{
-                form.setAttribute("hidden", "hidden")
+                f.setAttribute("hidden", "hidden")
             }
         }
-
-        const form = document.getElementById("form");
 
         function add_reply(entry_id){
             let form_content = document.getElementById("id_content");
@@ -50,8 +48,13 @@
 
         thread_update_socket.onmessage = function(e) {
             const placeholder = document.createElement("div");
-            placeholder.innerHTML = e.data;
+            let data = JSON.parse(e.data)
+            placeholder.innerHTML = data.content;
             main_section.appendChild(placeholder.firstElementChild)
+            if (data.origin === this_id){
+                delete_form()
+                window.scrollTo(0, document.body.scrollHeight);
+            }
         };
 
         thread_update_socket.onclose = function(e) {

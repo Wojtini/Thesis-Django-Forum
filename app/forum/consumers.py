@@ -21,4 +21,11 @@ class ThreadConsumer(WebsocketConsumer):
         pass
 
     def update_thread(self, event):
-        self.send(text_data=event.get("content"))
+        self.send(
+            text_data=json.dumps(
+                {
+                    "origin": event.get("origin_user"),
+                    "content": event.get("content"),
+                }
+            )
+        )

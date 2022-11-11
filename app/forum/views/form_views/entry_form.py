@@ -3,12 +3,13 @@ from io import BytesIO
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.files import File
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 from django.views import View
 
 from forum.forms import EntryForm
-from forum.models import Entry, EntryFile, Thread
+from forum.models import Entry, EntryFile, Thread, User
 from PIL import Image as PImage
 
 from forum.user_verification import user_verification
@@ -36,9 +37,19 @@ class EntryFormView(View):
         if form.is_valid():
             files = request.FILES.getlist("files")
             entry = self._create_new_entry(user, thread, form, files)
-            self._update_connected_clients(entry)
+            self._update_connected_clients(entry, user)
+        else:
+            return render(
+                request,
+                "components/form.html",
+                context={
+                    "form_errors": form.errors,
+                    "form": form,
+                    "endpoint": f"entryform/{kwargs.get('thread_name')}",
+                }
+            )
         print(form.errors)
-        return self.get(request, *args, **kwargs)
+        return HttpResponse(status=204)
 
     def _create_new_entry(self, user, thread, form, files) -> Entry:
         new_entry = Entry(
@@ -65,13 +76,14 @@ class EntryFormView(View):
         return new_file
 
     @staticmethod
-    def _update_connected_clients(entry: Entry):
+    def _update_connected_clients(entry: Entry, user: User):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             str(entry.thread_id),
             {
                 "type": "update_thread",
                 "content": loader.render_to_string("components/entry.html", {"entry": entry}),
+                "origin_user": str(user.identifier),
             },
         )
 

@@ -4,34 +4,24 @@
 {% block content %}
     <div class="container">
         {% include "components/category_panel.html" with category=category %}
-        <div
-            hx-get="/forms/threadform/{{ category.name }}"
-            hx-target="#div_form"
-            placeholder="Getting form..."
-            onclick="toggle_new_form_button()"
-        >
-            Create new thread
-        </div>
+
     </div>
-
-
     <div class="container">
         <div class="card-columns" id="thread_list">
+            <div class="card">
+                <button
+                    class="btn-lg w-100 h-100 btn-success"
+                    hx-get="/forms/threadform/{{ category.name }}"
+                    hx-target="#div_form"
+                    placeholder="Getting form..."
+                    onclick="toggle_new_form_button()"
+                >
+                    <br><br><br>Create new thread<br><br><br><br>
+                </button>
+            </div>
             {% for thread in threads %}
                 {% include "components/thread.html" with thread=thread %}
             {% endfor %}
         </div>
     </div>
-
-
-{#    <div class="album py-5 bg-light">#}
-{#        <div class="container">#}
-{#            <div class="row" id="thread_list">#}
-{#                {% for thread in threads %}#}
-{#                    {% include "components/thread.html" with thread=thread %}#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-
 {% endblock %}

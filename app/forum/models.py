@@ -83,7 +83,7 @@ class Thread(models.Model):
 
     @property
     def entries(self) -> Optional[QuerySet]:
-        return Entry.objects.filter(thread=self)
+        return Entry.objects.filter(thread=self).order_by("creation_date")
 
     @property
     def update_date(self):

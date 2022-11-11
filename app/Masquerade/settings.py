@@ -24,7 +24,9 @@ INSTALLED_APPS = [
     "channels",
     "captcha",
     "compressor",
+    "crispy_forms",
 ]
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -147,6 +149,7 @@ FILE_LIST_CACHE = "file_list_cache"
 USER_LIST_CACHE = "user_list_cache"
 INDEX_CACHE = "index_cache"
 THREAD_CACHE = "thread_cache"
+
 # COOKIES NAMES
 
 COOKIE_NAME_JWT = "identificator"
@@ -181,3 +184,5 @@ IDENTICON_SIZE = (10, 10)
 DISPLAYABLE_IMAGES = [".png", ".jpg", ".jpeg", ".gif", ".webp"]
 DISPLAYABLE_VIDEOS = [".mp4"]
 
+# MISC
+ENABLE_CAPTCHA = False

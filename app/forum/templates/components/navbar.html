@@ -29,30 +29,31 @@
         </button>
     </div>
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto"
+            hx-get="/forms/displaynameform"
+            hx-target="#div_form"
+            placeholder="Getting form..."
+            onclick="toggle_new_form_button()"
+        >
             <li class="nav-item">
                 {% if user %}
-                    <a class="navbar-brand mx-auto" href="#"><img class="logo" width="50px" height="50px" src={{ user.identicon.url }}></a>
+                    <a class="navbar-brand mx-auto" href="#"><img class="logo" width="70px" height="70px" src={{ user.identicon.url }}></a>
                 {% endif %}
             </li>
             <li class="nav-item">
                 {% if user %}
                     <a class="nav-link">
-                        <div class="container fixed-bottom" id="new_form_button">
-                            {% if user.display_name %}
-                                {{ user.display_name }}
-                            {% else %}
-                                <div
-                                    hx-get="/forms/displaynameform"
-                                    hx-target="#div_form"
-                                    placeholder="Getting form..."
-                                    onclick="toggle_new_form_button()"
-                                >
-                                    Set display name
-                                </div>
-                            {% endif %}
-                        </div>
+                        {% if user.display_name %}
+                            nickname:{{ user.display_name }}
+                        {% else %}
+                            <span
+                            >
+                                Set display name
+                            </span>
+                        {% endif %}
+                        <br>
                         user_id: {{ user.identifier }} <br>
+                        <script>const this_id="{{ user.identifier }}"</script>
                         created {{ user.created_at|timesince|timesince_filter }}
                     </a>
                 {% endif %}

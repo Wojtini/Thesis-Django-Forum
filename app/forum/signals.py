@@ -35,3 +35,9 @@ def auto_delete_file_on_delete(sender, instance: User, **kwargs):
     if instance.identicon and os.path.isfile(instance.identicon.path):
         os.remove(instance.identicon.path)
 
+
+@receiver(post_delete, sender=Entry)
+def auto_delete_file_on_delete(sender, instance: User, **kwargs):
+    if instance.identicon and os.path.isfile(instance.identicon.path):
+        os.remove(instance.identicon.path)
+

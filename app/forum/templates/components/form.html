@@ -1,3 +1,4 @@
+{% load crispy_forms_tags  %}
 <form
     id='form'
     hx-encoding='multipart/form-data'
@@ -5,13 +6,9 @@
     {{ additional_arguments|safe }}
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
 >
-    <div onclick="delete_form()">
-        close
-    </div>
-    {{ form }}
-    <button>
-    Upload
-    </button>
+    {{ form|crispy }}
+    <button type="button" class="btn btn-danger" onclick="delete_form()">Cancel</button>
+    <button type="submit" class="btn btn-success">Upload</button>
     <progress id='progress' value='0' max='100'></progress>
 </form>
 <script>
@@ -22,6 +19,6 @@
     }
 
     htmx.on('#form', 'htmx:xhr:progress', function(evt) {
-      htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+        htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
     });
 </script>

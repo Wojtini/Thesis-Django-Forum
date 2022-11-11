@@ -1,14 +1,16 @@
 from captcha.fields import CaptchaField
 from django import forms
 
+from Masquerade.settings import ENABLE_CAPTCHA
+
 
 class DisplayNameForm(forms.Form):
     display_name = forms.CharField(label="display name", max_length=20)
 
 
 class BaseForm(forms.Form):
-    # captcha = CaptchaField()
-    pass
+    if ENABLE_CAPTCHA:
+        captcha = CaptchaField()
 
 
 class EntryForm(BaseForm):
