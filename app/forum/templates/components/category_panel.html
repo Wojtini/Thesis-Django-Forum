@@ -2,7 +2,7 @@
 
 
 <a href="/category/{{ category.name }}">
-    <div class="media text-muted pt-3 border-bottom">
+    <div class="media text-muted pt-3 border-bottom {{ additional_class }}">
 {#        <img src="{{ category.creator.identicon.url }}" alt="">#}
         <p class="media-body pb-3 mb-0 small lh-125 border-gray">
             <strong class="d-block text-gray-dark">
@@ -10,6 +10,6 @@
             </strong>
             {{ category.description }}
         </p>
-        {{ category.number_of_active_threads }} active threads
+        {{ category.threads_amount }} active threads
     </div>
 </a>

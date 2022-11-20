@@ -12,7 +12,7 @@ from forum.forms import EntryForm
 from forum.models import Entry, EntryFile, Thread, User
 from PIL import Image as PImage
 
-from forum.user_verification import user_verification
+from forum.decorators.user_verification import user_verification
 
 
 class EntryFormView(View):
@@ -43,13 +43,11 @@ class EntryFormView(View):
                 request,
                 "components/form.html",
                 context={
-                    "form_errors": form.errors,
                     "form": form,
                     "endpoint": f"entryform/{kwargs.get('thread_name')}",
                 }
             )
-        print(form.errors)
-        return HttpResponse(status=204)
+        return HttpResponse(status=200)
 
     def _create_new_entry(self, user, thread, form, files) -> Entry:
         new_entry = Entry(
@@ -71,7 +69,7 @@ class EntryFormView(View):
         new_file.save()
         if new_file.is_image:
             compressed = EntryFormView._compress(file, 256)
-            new_file.compressed_file = compressed
+            new_file.compressed_file = compressed;
             new_file.save()
         return new_file
 

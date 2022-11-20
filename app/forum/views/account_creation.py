@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.views import View
 
-from forum.user_verification import user_verification
+from forum.decorators.user_verification import user_verification
 
 
 class AccountCreation(View):

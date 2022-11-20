@@ -1,19 +1,24 @@
+from django.db.models import Sum, Max
 from django.template import loader
 
-from Masquerade.settings import INDEX_CACHE
 from forum import models
 from forum.views.base_view import BaseView
 
 
-class Index(BaseView):
+class IndexView(BaseView):
     prerender_template = "index.html"
-    cache_location = INDEX_CACHE
+    cache_location = None
 
     def _get_prerender_view(self, *args, **kwargs):
-        threads = sorted(models.Thread.objects.filter(), key=lambda t: t.update_date, reverse=True)[0:6]
+        most_popular_threads = models.Thread.objects.annotate(pop_max=Max("cyclethread__popularity")).order_by("-pop_max")[0:6]
+
+        last_activity_threads = models.Thread.objects.all()
+        last_activity_threads = sorted(last_activity_threads, key=lambda x: x.update_date, reverse=True)
+
         return loader.render_to_string(
             self.prerender_template,
             context={
-                "threads": threads,
+                "pop_threads": most_popular_threads,
+                "act_threads": last_activity_threads,
             },
         )

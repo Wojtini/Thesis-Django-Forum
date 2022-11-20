@@ -7,17 +7,19 @@
             <h6 class="border-bottom border-gray pb-2 mb-0">
                 <div
                     hx-get="/forms/categoryform"
-                    hx-target="#div_form"
+                    hx-swap="afterbegin"
+                    hx-target="#categories_list"
                     placeholder="Getting form..."
                     onclick="toggle_new_form_button()"
                 >
                     Categories
-                    <button type="button" class="btn btn-outline-success">NEW</button>
+                    <button type="button" id="new_form_button" class="btn btn-outline-success">NEW</button>
 
                 </div>
             </h6>
 
             <div id="categories_list">
+                <div id="div_form"></div>
                 {% for category in categories %}
                     {% include "components/category_panel.html" with category=category %}
                 {% endfor %}

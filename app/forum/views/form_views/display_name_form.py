@@ -1,9 +1,8 @@
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.views import View
 
 from forum.forms import DisplayNameForm
-from forum.user_verification import user_verification
+from forum.decorators.user_verification import user_verification
 
 
 class DisplayNameFormView(View):
@@ -28,5 +27,4 @@ class DisplayNameFormView(View):
             if not user.display_name:
                 user.display_name = form.cleaned_data["display_name"]
                 user.save()
-        print(form.errors)
-        return HttpResponse(status=204)
+        return render(request, "components/reload_page.html")

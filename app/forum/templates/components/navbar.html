@@ -2,7 +2,7 @@
 {% load static %}
 
 
-<nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
@@ -19,6 +19,12 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'forum:userlist' %}">User List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum:graph' %}">Graphs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum:rules' %}">Rules</a>
             </li>
         </ul>
     </div>

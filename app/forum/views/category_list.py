@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.template import loader
 
 from forum.models import Category
-from forum.user_verification import user_verification
+from forum.decorators.user_verification import user_verification
 from forum.views.base_view import BaseView
 
 

@@ -1,18 +1,19 @@
 from django.urls import path
 
-from forum.views import Index, ThreadView, CategoryListView, CategoryView, GalleryView, AccountCreation, FileListView, \
-    UserListView, UserEntriesView, EntryFormView, DisplayNameFormView, CategoryFormView, ThreadFormView, GraphView
+from forum.views import IndexView, ThreadView, CategoryListView, CategoryView, GalleryView, AccountCreation, FileListView, \
+    UserListView, UserEntriesView, EntryFormView, DisplayNameFormView, CategoryFormView, ThreadFormView, GraphView, RulesView
 
 app_name = "forum"
 
 urlpatterns = [
-    path("", Index.as_view(), name="home"),
+    path("", IndexView.as_view(), name="home"),
+    path("rules/", RulesView.as_view(), name="rules"),
     path("categories/", CategoryListView.as_view(), name="categories"),
     path("gallery/", GalleryView.as_view(), name="gallery"),
     path("filelist/", FileListView.as_view(), name="filelist"),
     path("users/", UserListView.as_view(), name="userlist"),
     path("user/<str:user_id>", UserEntriesView.as_view(), name="user_id"),
-    path("graph/", GraphView.as_view(), name="user_id"),
+    path("graph/", GraphView.as_view(), name="graph"),
     path("thread/<str:thread_name>", ThreadView.as_view(), name="thread"),
     path("category/<str:category_name>", CategoryView.as_view(), name="category"),
     path("new_account", AccountCreation.as_view(), name="new_account"),

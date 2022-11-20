@@ -8,3 +8,13 @@ a.anchor {
 .entry:target {
     background-color: #ffa;
 }
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: justify;
+}
+
+.wrapper {
+height: 500px !important;
+}

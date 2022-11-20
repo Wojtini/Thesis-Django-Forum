@@ -1,27 +1,26 @@
 import json
 
-from asgiref.sync import async_to_sync
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 
-class ThreadConsumer(WebsocketConsumer):
-    def connect(self):
+class ThreadConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
         room_group_name = self.scope["url_route"]["kwargs"]["thread_id"]
-        async_to_sync(self.channel_layer.group_add)(
+        await self.channel_layer.group_add(
             room_group_name,
             self.channel_name
         )
 
-        self.accept()
+        await self.accept()
 
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         pass
 
-    def receive(self, text_data):
+    async def receive(self, text_data, **kwargs):
         pass
 
-    def update_thread(self, event):
-        self.send(
+    async def update_thread(self, event):
+        await self.send(
             text_data=json.dumps(
                 {
                     "origin": event.get("origin_user"),

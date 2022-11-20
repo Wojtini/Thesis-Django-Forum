@@ -1,10 +1,10 @@
 {% load static %}
 {% load datetime_extras %}
 
+{% spaceless %}
 <div class="container">
-<a class="anchor" id="{{ entry.id }}_jump_location">
-<div class="card mb-2 entry" id="{{ entry.id }}">
-    <div class="card-body p-2 p-sm-3">
+<div class="card mb-2 entry " id="{{ entry.id }}">
+    <div class="card-body p-2 p-sm-3 overflow-auto">
         <div class="media forum-item">
             <a href="#" data-toggle="collapse" data-target=".forum-content">
                 <img src="{{ entry.creator.identicon.url }}" class="mr-3" width="50" alt="User">
@@ -12,25 +12,21 @@
             <div class="media-body">
                 <h6>
                     <a href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
-                        #{{ entry.id }}:{{ entry.creator }}
+                        #{{ entry.id }} : {{ entry.creator }}
                     </a>
                 </h6>
                 <p class="text-secondary">
-                    {% for part in entry.with_links %}
-                        {% if part.safe %}
-                            {{ part.value|safe }}
-                        {% else %}
-                            {{ part.value }}
+                        <pre>{{ entry.parsed|safe }}</pre>
+                        {% if entry.not_parsed_files %}
+                            <br>Additional files:<br>
+                            {% for file in entry.not_parsed_files %}
+                                {% include "components/displayable_file.html" with file=file %} <br>
+                            {% endfor %}
                         {% endif %}
-                    {% endfor %}
-                    <br>
-                    {% for file in entry.attached_files.all %}
-                        {% include "components/displayable_file.html" with file=file %}
-                    {% endfor %}
                 </p>
                 <p class="text-muted">
                     <span class="text-secondary font-weight-bold">
-                        {{ entry.creation_date|timesince|timesince_filter }}
+                        {{ entry.creation_date }}
                     </span>
                 </p>
 {#                <button type="button" class="btn btn-info" onclick="add_reply({{ entry.id }})">Reply</button>#}
@@ -39,3 +35,4 @@
     </div>
 </div></a>
 </div>
+{% endspaceless %}

@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from forum.models import Thread, Entry
-from forum.user_verification import create_user
+from forum.decorators.user_verification import create_user
 
 
 class EntryModelTests(TestCase):
@@ -13,4 +13,4 @@ class EntryModelTests(TestCase):
         self.entry.save()
 
     def test_get_entries(self):
-        self.assertEqual(self.thread.total_number_of_entries, 1)
+        self.assertEqual(self.thread.entries_amount, 1)

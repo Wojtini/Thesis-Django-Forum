@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 import uuid
 from dataclasses import dataclass
 from typing import Optional
@@ -29,7 +30,7 @@ class UserJWT:
 
 
 def user_verification(user_needed):
-    def outer(func):
+    def decorator(func):
         def inner(*args, **kwargs):
             request = args[0].request
             if user := get_user(request):
@@ -53,7 +54,7 @@ def user_verification(user_needed):
 
             return response
         return inner
-    return outer
+    return decorator
 
 
 def get_user(request) -> Optional[User]:
@@ -81,7 +82,7 @@ def create_user() -> UserJWT:
     new_user.identicon = create_identicon(new_user.identifier)
     new_user.save()
     payload = {
-        "identifier": str(new_user.identifier)
+        "identifier": str(new_user.identifier),
     }
     encoded = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return UserJWT(model=new_user, encoded_jwt=encoded)

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from forum.user_verification import create_user, verify_user, UserJWT
+from forum.decorators.user_verification import create_user, verify_user, UserJWT
 
 
 class UserModelTests(TestCase):

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views import View
 
 from forum.forms import CategoryForm
-from forum.user_verification import user_verification
+from forum.decorators.user_verification import user_verification
 
 
 class CategoryFormView(View):

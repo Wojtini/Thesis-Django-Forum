@@ -1,7 +1,7 @@
 from captcha.fields import CaptchaField
 from django import forms
 
-from Masquerade.settings import ENABLE_CAPTCHA
+from Masquerade.settings import ENABLE_CAPTCHA_IN_FORMS
 
 
 class DisplayNameForm(forms.Form):
@@ -9,12 +9,25 @@ class DisplayNameForm(forms.Form):
 
 
 class BaseForm(forms.Form):
-    if ENABLE_CAPTCHA:
+    if ENABLE_CAPTCHA_IN_FORMS:
         captcha = CaptchaField()
 
 
 class EntryForm(BaseForm):
-    content = forms.CharField(label="text", max_length=500, widget=forms.Textarea)
+    content = forms.CharField(
+        label="Content",
+        max_length=500,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 3,
+                "cols": 40
+            }
+        ),
+        help_text="""
+        Options: <br>
+        #{entry_id} to create a link/reply. Example: (#13)<br>
+        % to place file in specific place in entry.""",
+    )
     files = forms.FileField(
         label="attached files",
         widget=forms.ClearableFileInput(

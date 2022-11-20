@@ -6,7 +6,7 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from Masquerade.settings import SAFE_CYCLES, MINIMUM_POPULARITY, MAX_FILESIZE_PER_THREAD_MB, MINIMUM_ALPHA_COEFFICENT, \
-    MAXIMUM_ALPHA_COEFFICENT, ENTRY_POPULARITY_CALCULATOR_FUNCTION
+    MAXIMUM_ALPHA_COEFFICENT, ENTRY_POPULARITY_CALCULATORS
 from forum.models import Thread, Entry, Cycle, CycleThread, User, Category
 
 
@@ -31,7 +31,7 @@ class Command(BaseCommand):
         categories_to_delete = [
             category
             for category in Category.objects.filter(created_date__lte=self.previous_date())
-            if category.number_of_active_threads == 0
+            if category.threads_amount == 0
         ]
         for category in categories_to_delete:
             self.log(f"Deleting {category.name} empty category")
@@ -100,26 +100,26 @@ class Command(BaseCommand):
         return a_coefficent * new_popularity + (1 - a_coefficent) * previous_popularity
 
     def calculate_popularity_from_new_entries(self, thread: Thread):
-        entries = list(Entry.objects.filter(thread=thread))
-        sorted(entries, key=lambda x: x.creation_date)
+        entries = sorted(list(Entry.objects.filter(thread=thread)), key=lambda x: x.creation_date)
         return sum(
-            self.get_entry_popularity(entry, entries[:entries.index(entry)]) for entry in entries
-            if not entry.calculated_popularity
+            self.get_entry_popularity(
+                entry,
+                [
+                    entry
+                    for entry in entries[:entries.index(entry)]
+                    if entry.was_popularity_calculated
+                ]
+            )
+            for entry in entries
+            if not entry.was_popularity_calculated
         )
 
     def get_entry_popularity(self, entry: Entry, previous_entries: List[Entry]) -> float:
-        # amount_of_files = len(entry.attached_files)
-        previous_entries_of_the_same_user = [entry for entry in previous_entries if entry.creator == entry.creator]
-        user_activity_in_thread = len(previous_entries_of_the_same_user)
-        activity_in_thread = len(previous_entries) + 1
-        activity_threshold = 5
-        base_popularity = 2
-        if user_activity_in_thread / activity_in_thread > 0.65:
-            return 0
-
-        popularity = base_popularity * max(user_activity_in_thread / activity_threshold, 1.0)
-
-        entry.calculated_popularity = True
+        entry.was_popularity_calculated = True
         entry.save()
+        popularity = 0
+        for calculator in ENTRY_POPULARITY_CALCULATORS:
+            popularity = calculator(popularity, entry, previous_entries)
+
         self.log(f"Popularity from entry {entry}: {popularity}")
         return popularity

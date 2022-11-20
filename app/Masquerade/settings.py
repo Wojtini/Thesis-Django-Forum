@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 
+from forum.entry_popularity_calculators import base, one_user_chat, files_bonus
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,8 +9,46 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = os.environ.get("DEBUG_MODE") == "True"
 
-ALLOWED_HOSTS = ["milepogawedki.xyz", "www.milepogawedki.xyz", "localhost", "192.168.1.2"]
+ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["https://milepogawedki.xyz"]
+
+
+# CRONJOBS
+SAFE_CYCLES = 5
+MINIMUM_POPULARITY = 2
+
+MAX_FILESIZE_PER_THREAD_MB = 200
+MINIMUM_ALPHA_COEFFICENT = 0.1
+MAXIMUM_ALPHA_COEFFICENT = 0.9
+
+
+# IDENTICON
+IDENTICON_FOREGROUNDS = [
+    "rgb(45,79,255)",
+    "rgb(254,180,44)",
+    "rgb(226,121,234)",
+    "rgb(30,179,253)",
+    "rgb(232,77,65)",
+    "rgb(49,203,115)",
+    "rgb(141,69,170)",
+]
+IDENTICON_BACKGROUND = "rgb(224,224,224)"
+IDENTICON_PADDING = (10, 10, 10, 10)
+IDENTICON_SIZE = (10, 10)
+
+# FORMS
+ENABLE_CAPTCHA_IN_FORMS = True
+
+# DISPLAYABLE MEDIA
+DISPLAYABLE_IMAGES = [".png", ".jpg", ".jpeg", ".gif", ".webp"]
+DISPLAYABLE_VIDEOS = [".mp4"]
+
+# ENTRY POPULARITY FUNCTIONS
+ENTRY_POPULARITY_CALCULATORS = [
+    base,
+    files_bonus,
+    one_user_chat(threshold=0.65),
+]
 
 # Application definition
 
@@ -118,9 +157,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "../staticfiles")
 MEDIA_ROOT = os.path.join(BASE_DIR, "../media")
 MEDIA_URL = "/media/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CHANNELS
@@ -143,46 +179,14 @@ CACHES = {
         "LOCATION": "redis://redis:6379",
     }
 }
-DISABLE_CACHE = DEBUG
+DISABLE_CACHE = True
 GALLERY_CACHE = "gallery_cache"
 FILE_LIST_CACHE = "file_list_cache"
 USER_LIST_CACHE = "user_list_cache"
-INDEX_CACHE = "index_cache"
 THREAD_CACHE = "thread_cache"
 
 # COOKIES NAMES
 
 COOKIE_NAME_JWT = "identificator"
+COOKIE_NAME_RULES = "accepted_rules"
 COOKIE_LIFETIME = 365*24*60*60
-
-# CRONJOBS
-
-SAFE_CYCLES = 5
-MINIMUM_POPULARITY = 2
-
-MAX_FILESIZE_PER_THREAD_MB = 200
-MINIMUM_ALPHA_COEFFICENT = 0.1
-MAXIMUM_ALPHA_COEFFICENT = 0.9
-
-
-# IDENTICON
-
-IDENTICON_FOREGROUNDS = [
-    "rgb(45,79,255)",
-    "rgb(254,180,44)",
-    "rgb(226,121,234)",
-    "rgb(30,179,253)",
-    "rgb(232,77,65)",
-    "rgb(49,203,115)",
-    "rgb(141,69,170)",
-]
-IDENTICON_BACKGROUND = "rgb(224,224,224)"
-IDENTICON_PADDING = (10, 10, 10, 10)
-IDENTICON_SIZE = (10, 10)
-
-# DISPLAYABLE MEDIA
-DISPLAYABLE_IMAGES = [".png", ".jpg", ".jpeg", ".gif", ".webp"]
-DISPLAYABLE_VIDEOS = [".mp4"]
-
-# MISC
-ENABLE_CAPTCHA = False

@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.views import View
 
 from Masquerade.settings import DISABLE_CACHE
-from forum.user_verification import user_verification
+from forum.decorators.rule_accepter import must_accept_rules
+from forum.decorators.user_verification import user_verification
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +14,9 @@ logger = logging.getLogger(__name__)
 class BaseView(View):
     template_name = "base/base.html"
     prerender_template = None
-    form_class = None
     cache_location = None
 
+    @must_accept_rules
     @user_verification(user_needed=False)
     def get(self, request, *args, **kwargs):
         return self._get_rendered_view(
@@ -34,7 +35,6 @@ class BaseView(View):
             context={
                 "user": user,
                 "prerender": prerender,
-                "form": self.form_class if user else None,
                 **additional_context,
             },
         )

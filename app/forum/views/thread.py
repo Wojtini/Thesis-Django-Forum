@@ -3,7 +3,8 @@ from django.template import loader
 from Masquerade.settings import THREAD_CACHE
 from forum import models
 
-from forum.user_verification import user_verification
+from forum.decorators.user_verification import user_verification
+from forum.views.graph import GraphView
 from forum.views.base_view import BaseView
 
 
@@ -27,5 +28,6 @@ class ThreadView(BaseView):
             self.prerender_template,
             context={
                 "thread": thread,
+                "graph": GraphView().get_as_component_for_thread(thread)
             },
         )

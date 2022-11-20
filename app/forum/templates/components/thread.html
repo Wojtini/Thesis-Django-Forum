@@ -2,7 +2,7 @@
 
 
 <a href="/thread/{{ thread.title }}" class="text-decoration-none">
-    <div class="card mb-5 shadow-sm">
+    <div class="card mb-5 shadow-lg">
         <div style="position: relative;">
             {% if thread.last_image %}
                 <img class="card-img-top" src="{{ thread.last_image.compressed_file.url }}" alt="Card image cap">
@@ -17,7 +17,7 @@
             <p class="card-text">{{ thread.description }}</p>
             <div class="d-flex justify-content-between align-items-center">
                 <small class="text-muted">
-                    💬 {{ thread.total_number_of_entries }} comments <br>
+                    💬 {{ thread.entries_amount }} comments <br>
                     Created: {{ thread.created_date|timesince|timesince_filter }} <br>
                     Last update: {{ thread.update_date|timesince|timesince_filter }}
                 </small>

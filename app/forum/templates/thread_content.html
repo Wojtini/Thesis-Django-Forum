@@ -1,15 +1,26 @@
 {% extends "base/prerender.html" %}
 {% block content %}
-    <div class="container-sm mw-100 float-sm-right">
-        {% include "components/thread.html" with thread=thread %}
-    </div>
     <section id="section_main">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    {% include "components/thread.html" with thread=thread %}
+                </div>
+                <div class="col-sm-8 bg-light card mb-5 d-none d-md-block">
+                    Popularity
+                    {{ graph }}
+                </div>
+            </div>
+        </div>
         {% for entry in thread.entries %}
             {% include "components/entry.html" with entry=entry %}
         {% endfor %}
     </section>
 
-    <div class="container fixed-bottom bg-light" id="new_form_button">
+
+    <div class="container fixed-bottom bg-secondary" id="div_form">
+    </div>
+    <div class="container fixed-bottom" id="new_form_button">
         <button
             class="btn-lg w-100 h-100 btn-success"
             hx-get="/forms/entryform/{{ thread.title }}"
@@ -19,17 +30,10 @@
         >
             Add comment
         </button>
+        <snap class="sticky" id="alert_place"></snap>
     </div>
 
     <script>
-        function toggle_new_form_button(){
-            let f = document.getElementById("new_form_button");
-            if (f.hasAttribute("hidden")){
-                f.removeAttribute("hidden")
-            }else{
-                f.setAttribute("hidden", "hidden")
-            }
-        }
 
         function add_reply(entry_id){
             let form_content = document.getElementById("id_content");
@@ -56,6 +60,12 @@
             }
         };
 
+        thread_update_socket.addEventListener('close', (event) => {
+            let place = document.getElementById("alert_place");
+            place.outerHTML = '<div class="alert alert-danger" role="alert">' +
+                'Disconnected from the thread! New content will not be automatically displayed.' +
+                '</div>'
+        })
         thread_update_socket.onclose = function(e) {
             console.error('Chat socket closed');
         };

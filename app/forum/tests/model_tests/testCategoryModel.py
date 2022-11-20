@@ -17,4 +17,4 @@ class CategoryModelTests(TestCase):
 
     def test_category_with_threads(self):
         cat = Category.objects.get(name="Category_with_threads")
-        self.assertTrue(cat.number_of_active_threads == 2)
+        self.assertTrue(cat.threads_amount == 2)

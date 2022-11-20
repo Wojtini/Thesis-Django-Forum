@@ -1,14 +1,13 @@
 import re
 import uuid
-from typing import Optional
+from typing import Optional, List
 
-from django.contrib import admin
-from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db import models
 from django.db.models import QuerySet
-from django.utils.safestring import mark_safe
+from django.template.loader import render_to_string
+from django.utils.html import escape
 
-from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS, SAFE_CYCLES
+from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS
 
 
 class User(models.Model):
@@ -58,10 +57,10 @@ class Category(models.Model):
 
     @property
     def is_empty(self) -> bool:
-        return self.number_of_active_threads == 0
+        return self.threads_amount == 0
 
     @property
-    def number_of_active_threads(self) -> int:
+    def threads_amount(self) -> int:
         return len(self.threads)
 
     @property
@@ -75,13 +74,12 @@ class Thread(models.Model):
     description = models.TextField(null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    cycle = models.IntegerField(default=-SAFE_CYCLES-1)
 
     def __str__(self) -> str:
         return f"{self.title} by {str(self.creator)}"
 
     @property
-    def total_number_of_entries(self) -> int:
+    def entries_amount(self) -> int:
         return self.entries.count()
 
     @property
@@ -159,26 +157,55 @@ class Entry(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     content = models.TextField()
     creation_date = models.DateTimeField(auto_now_add=True)
-    calculated_popularity = models.BooleanField(default=False)
+    was_popularity_calculated = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.thread}: {self.content}"
 
     @property
     def attached_files(self):
-        return EntryFile.objects.filter(entry=self)
+        return EntryFile.objects.filter(entry=self).order_by("id")
 
     @property
     def with_links(self):
-        splitted = re.split(r"(#[0-9]+)", self.content)
+        regex = r"(#[0-9]+)"
+        splitted = re.split(regex, self.content)
         result = [
             {
-                "value": part if not re.search(r"(#[0-9]+)", part) else f"<a href='{part}_jump_location'>{part}</a>",
-                "safe": re.search(r"(#[0-9]+)", part),
+                "value": part if not re.search(regex, part) else f"<a href='{part}'>{part}</a>",
+                "safe": re.search(regex, part),
             }
             for part in splitted
         ]
         return result
+
+    @property
+    def parsed(self):
+        parts = self.with_links
+        files: List[EntryFile] = list(self.attached_files)[::-1]
+        s = [
+            part.get("value") if part.get("safe") else escape(part.get("value"))
+            for part in parts
+        ]
+        regex = r"(%)"
+        splitted = re.split(regex, "".join(s))
+        for index, part in enumerate(splitted):
+            if re.search(regex, part):
+                try:
+                    splitted[index] = render_to_string(
+                        "components/displayable_file.html",
+                        context={"file": files.pop()},
+                    )
+                except IndexError:
+                    break
+        return "".join(splitted)
+
+    @property
+    def not_parsed_files(self):
+        files: List[EntryFile] = list(self.attached_files)
+        regex = r"(%)"
+        amount_of_parsed_files = len(re.findall(regex, self.content))
+        return files[amount_of_parsed_files:]
 
 
 class Cycle(models.Model):
@@ -197,75 +224,3 @@ class CycleThread(models.Model):
 all_models = [
     User, Entry, Thread, Category, EntryFile, Cycle, CycleThread
 ]
-
-
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('identifier', 'display_name', 'created_at')
-    readonly_fields = ('identifier', 'display_name', 'created_at', 'identicon_image')
-
-    def identicon_image(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
-                url=obj.identicon.url,
-                width=obj.identicon.width,
-                height=obj.identicon.height,
-            )
-        )
-
-    identicon_image.allow_tags = True
-
-
-class EntryInstanceInline(admin.TabularInline):
-    model = Entry
-
-
-class EntryFileInstanceInline(admin.TabularInline):
-    model = EntryFile
-
-
-class EntryAdmin(admin.ModelAdmin):
-    list_display = ('creator', 'thread', 'creation_date', 'calculated_popularity', 'attachments')
-    inlines = [EntryFileInstanceInline]
-
-    def attachments(self, obj):
-        return [
-            file
-            for file in obj.attached_files
-        ]
-
-
-class ThreadAdmin(admin.ModelAdmin):
-    list_display = ('title', 'total_number_of_entries', 'created_date', 'all_files_size_mb')
-
-    inlines = [EntryInstanceInline]
-
-
-class EntryFileAdmin(admin.ModelAdmin):
-    list_display = ('size', 'as_link', 'as_image')
-    readonly_fields = ('size', 'as_link', 'as_image')
-
-    def as_link(self, obj):
-        return mark_safe('<a href="{url}"/>{filename}</a>'.format(
-                url=obj.original_file.url,
-                filename=obj.original_file,
-            )
-        )
-
-    def size(self, obj: EntryFile):
-        return f'{obj.original_file.size}B'
-
-    def as_image(self, obj):
-        return mark_safe('<img src="{url}"/>'.format(
-                url=obj.compressed_file.url,
-            )
-        )
-
-    as_link.allow_tags = True
-    as_image.allow_tags = True
-
-    # inlines = [ReverseEntryInstanceInline]
-
-
-admin.site.register(User, UserAdmin)
-admin.site.register(Thread, ThreadAdmin)
-admin.site.register(Entry, EntryAdmin)
-admin.site.register(EntryFile, EntryFileAdmin)

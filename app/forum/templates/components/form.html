@@ -5,11 +5,15 @@
     hx-post='/forms/{{ endpoint }}'
     {{ additional_arguments|safe }}
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    class="bg-light p-2 shadow-lg rounded card"
+    hx-target="this"
+    hx-swap="outerHTML"
 >
     {{ form|crispy }}
     <button type="button" class="btn btn-danger" onclick="delete_form()">Cancel</button>
     <button type="submit" class="btn btn-success">Upload</button>
-    <progress id='progress' value='0' max='100'></progress>
+    <br>
+    <progress class="w-100 center" id='progress' value='0' max='100'></progress>
 </form>
 <script>
     function delete_form(){
