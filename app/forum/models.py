@@ -4,8 +4,6 @@ from typing import Optional, List
 
 from django.db import models
 from django.db.models import QuerySet
-from django.template.loader import render_to_string
-from django.utils.html import escape
 
 from Masquerade.settings import DISPLAYABLE_IMAGES, DISPLAYABLE_VIDEOS
 
@@ -14,7 +12,7 @@ class User(models.Model):
     identifier = models.UUIDField(default=uuid.uuid4, null=False, primary_key=True, editable=False)
     display_name = models.CharField(null=True, default=None, editable=False, max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
-    identicon = models.ImageField(null=False)
+    identicon = models.ImageField(null=False, editable=False)
 
     @property
     def entries(self) -> QuerySet:
@@ -47,10 +45,10 @@ class User(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    description = models.TextField(null=False, max_length=300)
-    created_date = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=64, unique=True, editable=False)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False)
+    description = models.TextField(null=False, max_length=300, editable=False)
+    created_date = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -69,10 +67,10 @@ class Category(models.Model):
 
 
 class Thread(models.Model):
-    title = models.CharField(max_length=64, unique=True)
-    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    description = models.TextField(null=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=64, unique=True, editable=False)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False)
+    description = models.TextField(null=True, editable=False)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, editable=False)
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
@@ -112,7 +110,7 @@ class Thread(models.Model):
     def all_files_size_b(self) -> int:
         files_in_thread = EntryFile.objects.filter(entry__thread=self)
         return sum(
-            file.original_file.size + (file.compressed_file.size if file.compressed_file else 0)
+            file.size
             for file in files_in_thread
         )
 
@@ -151,13 +149,20 @@ class EntryFile(models.Model):
     def thread_link(self):
         return self.entry.thread.get_link + f"#{self.entry.id}"
 
+    @property
+    def size(self):
+        try:
+            return self.original_file.size
+        except FileNotFoundError:
+            return 0
+
 
 class Entry(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     content = models.TextField()
     creation_date = models.DateTimeField(auto_now_add=True)
-    was_popularity_calculated = models.BooleanField(default=False)
+    was_popularity_calculated = models.BooleanField(default=False, editable=False)
 
     def __str__(self):
         return f"{self.thread}: {self.content}"
@@ -167,44 +172,10 @@ class Entry(models.Model):
         return EntryFile.objects.filter(entry=self).order_by("id")
 
     @property
-    def with_links(self):
-        regex = r"(#[0-9]+)"
-        splitted = re.split(regex, self.content)
-        result = [
-            {
-                "value": part if not re.search(regex, part) else f"<a href='{part}'>{part}</a>",
-                "safe": re.search(regex, part),
-            }
-            for part in splitted
-        ]
-        return result
-
-    @property
-    def parsed(self):
-        parts = self.with_links
-        files: List[EntryFile] = list(self.attached_files)[::-1]
-        s = [
-            part.get("value") if part.get("safe") else escape(part.get("value"))
-            for part in parts
-        ]
-        regex = r"(%)"
-        splitted = re.split(regex, "".join(s))
-        for index, part in enumerate(splitted):
-            if re.search(regex, part):
-                try:
-                    splitted[index] = render_to_string(
-                        "components/displayable_file.html",
-                        context={"file": files.pop()},
-                    )
-                except IndexError:
-                    break
-        return "".join(splitted)
-
-    @property
     def not_parsed_files(self):
         files: List[EntryFile] = list(self.attached_files)
-        regex = r"(%)"
-        amount_of_parsed_files = len(re.findall(regex, self.content))
+        regex = r"<img"
+        amount_of_parsed_files = len(re.findall(regex, self.content))//2
         return files[amount_of_parsed_files:]
 
 

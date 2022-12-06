@@ -1,6 +1,6 @@
 {% extends "base/prerender.html" %}
 {% block content %}
-    <div class="container-fluid bg-light">
+    <div class="container bg-light">
         <canvas id="lineChart"></canvas>
     </div>
 
@@ -21,7 +21,7 @@
                     borderColor: [
                         '{{ values.color|safe }}',
                     ],
-                    borderWidth: 2
+                    borderWidth: 4
                 },
             {% endfor %}
             ]

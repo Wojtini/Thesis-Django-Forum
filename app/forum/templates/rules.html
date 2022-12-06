@@ -7,13 +7,20 @@
 </head>
 <body class="bg-secondary">
     <div class="container bg-light p-4">
-        <h1>Rules:</h1>
-        1. PLACEHOLDER <br>
-        2. PLACEHOLDER
+        <h1>Zasady użytkowania:</h1>
+        <ol>
+          <li>Strona wykorzystuje cookies.</li>
+          <li>W momencie udostępnienia przez użytkownika dowolnej treści na forum, użytkownik zgadza się na cookies zawierający unikalny identyfikator, który będzie go identyfikować w kolejnych etapach ścieżi użytkownika</li>
+          <li>Wszystkie treści zamieszczone na stronie, mogą zostać w dowolnej chwili usunięte poprzez administrację lub wyczyszczone przez samo forum.</li>
+          <li>Lorem ipsum dolor sit amet...</li>
+        </ol>
         <form action="" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn-success">I understand the rules and I accept the rules</button>
+            <button type="submit" class="btn-success">
+                Accept
+            </button>
         </form>
+        <button class="btn-danger" onclick="history.back()">Wróć</button>
     </div>
 </body>
 </html>

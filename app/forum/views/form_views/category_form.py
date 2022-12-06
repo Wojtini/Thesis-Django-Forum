@@ -36,6 +36,8 @@ class CategoryFormView(View):
                     creator=user,
                 )
                 new_category.save()
+                if kwargs.get("new_user"):
+                    return render(request, "components/reload_page.html")
                 return render(
                     request, "components/category_panel.html",
                     context={

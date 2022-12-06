@@ -8,8 +8,9 @@ def one_user_chat(threshold: float):
         previous_entries_of_the_same_user = [entry for entry in previous_entries if entry.creator == entry.creator]
         user_activity_in_thread = len(previous_entries_of_the_same_user)
         activity_in_thread = len(previous_entries) + 1
-        if user_activity_in_thread / activity_in_thread > threshold:
-            print(f"Popularity set to 0, oneuser thread")
+        percent = user_activity_in_thread / activity_in_thread
+        if percent > threshold:
+            print(f"Popularity set to 0, oneuser thread {percent*100}%")
             return 0
         return popularity
     return one_user_chat_inner

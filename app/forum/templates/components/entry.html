@@ -3,7 +3,7 @@
 
 {% spaceless %}
 <div class="container">
-<div class="card mb-2 entry " id="{{ entry.id }}">
+<div class="card mb-2 entry" id="{{ entry.id }}">
     <div class="card-body p-2 p-sm-3 overflow-auto">
         <div class="media forum-item">
             <a href="#" data-toggle="collapse" data-target=".forum-content">
@@ -16,7 +16,7 @@
                     </a>
                 </h6>
                 <p class="text-secondary">
-                        <pre>{{ entry.parsed|safe }}</pre>
+                        <pre>{{ entry.content|safe }}</pre>
                         {% if entry.not_parsed_files %}
                             <br>Additional files:<br>
                             {% for file in entry.not_parsed_files %}

@@ -3,11 +3,11 @@
     <section id="section_main">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     {% include "components/thread.html" with thread=thread %}
                 </div>
-                <div class="col-sm-8 bg-light card mb-5 d-none d-md-block">
-                    Popularity
+                <div class="col-sm-8 mb-5 d-none d-lg-block">
+                    <div class="bg-white p-2 text-center">Thread Popularity</div>
                     {{ graph }}
                 </div>
             </div>
@@ -21,8 +21,7 @@
     <div class="container fixed-bottom bg-secondary" id="div_form">
     </div>
     <div class="container fixed-bottom" id="new_form_button">
-        <button
-            class="btn-lg w-100 h-100 btn-success"
+        <button class="btn-lg w-100 h-100 btn-success"
             hx-get="/forms/entryform/{{ thread.title }}"
             hx-target="#div_form"
             placeholder="Getting form..."
@@ -52,12 +51,9 @@
         thread_update_socket.onmessage = function(e) {
             const placeholder = document.createElement("div");
             let data = JSON.parse(e.data)
+            console.log(data)
             placeholder.innerHTML = data.content;
             main_section.appendChild(placeholder.firstElementChild)
-            if (data.origin === this_id){
-                delete_form()
-                window.scrollTo(0, document.body.scrollHeight);
-            }
         };
 
         thread_update_socket.addEventListener('close', (event) => {

@@ -6,7 +6,7 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from Masquerade.settings import SAFE_CYCLES, MINIMUM_POPULARITY, MAX_FILESIZE_PER_THREAD_MB, MINIMUM_ALPHA_COEFFICENT, \
-    MAXIMUM_ALPHA_COEFFICENT, ENTRY_POPULARITY_CALCULATORS
+    MAXIMUM_ALPHA_COEFFICENT, ENTRY_POPULARITY_CALCULATORS, SAFE_MINUTES
 from forum.models import Thread, Entry, Cycle, CycleThread, User, Category
 
 
@@ -89,7 +89,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def previous_date():
-        return timezone.now() - timedelta(minutes=2)
+        return timezone.now() - timedelta(minutes=SAFE_MINUTES)
 
     @staticmethod
     def delete_thread(thread: Thread):

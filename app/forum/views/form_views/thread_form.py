@@ -41,6 +41,8 @@ class ThreadFormView(View):
                 )
                 new_thread.save()
                 return render(request, "components/thread.html", context={"thread": new_thread})
+        if kwargs.get("new_user"):
+            return render(request, "components/reload_page.html")
         return render(
             request,
             "components/form.html",

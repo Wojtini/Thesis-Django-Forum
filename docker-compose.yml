@@ -1,10 +1,5 @@
 version: "3.9"
 
-database_variables:
-  environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
 
 services:
   db:
@@ -35,7 +30,7 @@ services:
       - redis
   live-chat:
     build: .
-    command: sh -c "cd app && daphne -b 0.0.0.0 -p 8010 Masquerade.asgi:application"
+    command: sh -c "cd app && uvicorn --host 0.0.0.0 --port 8010 --workers=12 Masquerade.asgi:application"
     volumes:
       - .:/app
     environment:

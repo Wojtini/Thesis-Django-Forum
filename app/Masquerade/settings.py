@@ -18,7 +18,7 @@ SAFE_CYCLES = 5
 MINIMUM_POPULARITY = 2
 
 MAX_FILESIZE_PER_THREAD_MB = 200
-MINIMUM_ALPHA_COEFFICENT = 0.1
+MINIMUM_ALPHA_COEFFICENT = 0.4
 MAXIMUM_ALPHA_COEFFICENT = 0.9
 
 
@@ -179,7 +179,7 @@ CACHES = {
         "LOCATION": "redis://redis:6379",
     }
 }
-DISABLE_CACHE = True
+DISABLE_CACHE = os.environ.get("DEBUG_MODE") == "True"
 GALLERY_CACHE = "gallery_cache"
 FILE_LIST_CACHE = "file_list_cache"
 USER_LIST_CACHE = "user_list_cache"
@@ -190,3 +190,6 @@ THREAD_CACHE = "thread_cache"
 COOKIE_NAME_JWT = "identificator"
 COOKIE_NAME_RULES = "accepted_rules"
 COOKIE_LIFETIME = 365*24*60*60
+
+# SAFE MINUTES
+SAFE_MINUTES = 2

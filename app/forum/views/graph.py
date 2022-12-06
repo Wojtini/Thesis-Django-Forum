@@ -17,7 +17,10 @@ class GraphView(BaseView):
 
     def get_rendered_graph(self, cycles):
         graph_colors = [
-            'RGBA( 255, 0, 0,   1 )',
+            'RGBA( 255, 0, 0,   0.5 )',
+            'RGBA( 255, 255, 0,   0.5 )',
+            'RGBA( 255, 0, 255,   0.5 )',
+            'RGBA( 0, 255, 255,   0.5 )',
         ]
         curr_graph = 0
         x_values_id = list({cyclet.cycle_id for cyclet in cycles})

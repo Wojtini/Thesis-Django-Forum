@@ -34,7 +34,7 @@ def user_verification(user_needed):
         def inner(*args, **kwargs):
             request = args[0].request
             if user := get_user(request):
-                kwargs.update({"user": user})
+                kwargs.update({"user": user, "new_user": False})
             elif user_needed:
                 new_user = create_user()
                 kwargs.update(
@@ -42,7 +42,8 @@ def user_verification(user_needed):
                         "user": new_user.model,
                         "cookies_to_set": [
                             Cookie(COOKIE_NAME_JWT, new_user.encoded_jwt),
-                        ]
+                        ],
+                        "new_user": True,
                     }
                 )
                 logger.info(f"{new_user.model.identifier}: Created a new user")

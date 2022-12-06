@@ -41,6 +41,7 @@ class BaseView(View):
 
     def _get_prerender_from_cache(self, *args, **kwargs):
         if DISABLE_CACHE:
+            logger.info(f"Cache disabled, recreating view")
             return self._get_prerender_view(*args, **kwargs)
         true_cache_location = self.cache_location + "/" + kwargs.get("suffix", "")
         if cached := cache.get(true_cache_location):

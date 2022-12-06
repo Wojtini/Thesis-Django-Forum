@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from forum.models import Entry, EntryFile, User, Thread
 
@@ -44,27 +45,24 @@ class ThreadAdmin(admin.ModelAdmin):
 
 
 class EntryFileAdmin(admin.ModelAdmin):
-    list_display = ('size', 'as_link', 'as_image')
-    readonly_fields = ('size', 'as_link', 'as_image')
+    list_display = ('original_file', 'compressed_file', 'size', 'as_link', 'interactive')
+    readonly_fields = ('original_file', 'compressed_file', 'size', 'as_link', 'interactive')
 
-    def as_link(self, obj):
+    def as_link(self, obj: EntryFile):
         return mark_safe('<a href="{url}"/>{filename}</a>'.format(
-                url=obj.original_file.url,
+                url=com.url if (com := obj.compressed_file) else obj.original_file.url,
                 filename=obj.original_file,
             )
         )
 
     def size(self, obj: EntryFile):
-        return f'{obj.original_file.size}B'
+        return f'{obj.original_file.size} Bytes'
 
-    def as_image(self, obj):
-        return mark_safe('<img src="{url}"/>'.format(
-                url=obj.original_file.url,
-            )
-        )
+    def interactive(self, obj: EntryFile):
+        return render_to_string("components/displayable_file.html", context={"file": obj})
 
     as_link.allow_tags = True
-    as_image.allow_tags = True
+    interactive.allow_tags = True
 
     # inlines = [ReverseEntryInstanceInline]
 
